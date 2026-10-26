@@ -9,6 +9,9 @@ dentro del webview de una app móvil.
 |-------|------|
 | Vuela | [`vuela/`](vuela/) |
 | Sudoku 6×6 | [`sudoku/`](sudoku/) |
+| Reinas | [`reinas/`](reinas/) |
+| Apila | [`apila/`](apila/) |
+| Palabra del día | [`palabra/`](palabra/) |
 
 ## Estructura
 
@@ -19,6 +22,9 @@ shared/styles.css   estilos de marca comunes
 shared/sound.js     sonidos sintetizados (Web Audio), comunes a todos los juegos
 vuela/              juego "Vuela" (index.html, game.js, game.css)
 sudoku/             sudoku 6×6 con tres dificultades y premio según el tiempo
+reinas/             una reina por fila, columna y región; 6×6 a 8×8, premio según el tiempo
+apila/              torre de bloques; premios al llegar a 10, 25, 50 y 100 bloques
+palabra/            palabra del día (5 letras, 6 intentos); words.js tiene las listas
 ```
 
 ## Probar en local

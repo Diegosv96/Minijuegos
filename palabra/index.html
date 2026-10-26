@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Palabra del día</title>
+<link rel="stylesheet" href="../shared/styles.css">
+<link rel="stylesheet" href="game.css">
+</head>
+<body>
+<main>
+  <header class="top">
+    <div>
+      <h1>Palabra del día</h1>
+      <p class="mode" id="mode"></p>
+    </div>
+    <button type="button" class="switch" id="switch">Practicar</button>
+  </header>
+
+  <div class="board-wrap">
+    <div class="board" id="board" aria-label="Intentos"></div>
+    <div class="toast" id="toast" role="status" hidden></div>
+  </div>
+
+  <div class="keyboard" id="keyboard"></div>
+</main>
+
+<div class="win" id="win" hidden>
+  <div class="card" role="dialog" aria-labelledby="win-title">
+    <div class="medal" id="win-medal"></div>
+    <h2 id="win-title"></h2>
+    <p class="detail" id="win-detail"></p>
+    <p class="prize" id="win-prize"></p>
+    <p class="next" id="win-next">Nueva palabra en <strong id="win-countdown"></strong></p>
+    <button type="button" id="practice">Practicar con otra palabra</button>
+    <button type="button" class="secondary" id="close">Ver el tablero</button>
+  </div>
+</div>
+
+<script src="../shared/bridge.js"></script>
+<script src="../shared/sound.js"></script>
+<script src="words.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
