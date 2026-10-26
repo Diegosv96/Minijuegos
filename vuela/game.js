@@ -1,16 +1,22 @@
 (() => {
   // ---------- Configuration ----------
-  const W = 360, H = 640;          // logical size; scaled to fit the screen
+  const H = 640;                   // logical height; the width follows the screen shape
+  const MIN_W = 280, MAX_W = 480;  // beyond this range the game is letterboxed
   const GROUND_H = 90;
   const GRAVITY = 1500;            // px/s²
   const FLAP_V = -430;             // px/s
   const MAX_FALL = 700;            // px/s
   const PIPE_W = 64;
-  const PIPE_GAP = 165;
+  const PIPE_GAP = 120;            // vertical gap between top and bottom pipe
   const PIPE_SPEED = 160;          // px/s
   const PIPE_INTERVAL = 1.45;      // s between pipes
   const STEP = 1 / 60;             // fixed physics step
   const GAME_ID = 'vuela';
+
+  // Pipes that give a prize when passed (pipe number -> kind)
+  const PRIZE_PIPES = { 10: 'gold', 25: 'gold', 50: 'gold', 100: 'blue' };
+  const PRIZE_TEXT = { gold: '¡Has ganado un premio!', blue: '¡Premio superior!' };
+  const PRIZE_TIME = 2.2;          // s the prize banner stays on screen
 
   // ---------- Token supplied by the app (?token=...), see shared/bridge.js ----------
   const token = window.getToken();
@@ -24,27 +30,87 @@
     try { localStorage.setItem('vuela_best', String(v)); } catch (e) {}
   }
 
+  // ---------- CSS colors ----------
+  const cssCache = {};
+  function getVar(name) {
+    if (!cssCache[name]) {
+      cssCache[name] = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+    return cssCache[name];
+  }
+
+  // ---------- Sound (Web Audio, unlocked on the first tap) ----------
+  let audio = null;
+  function unlockAudio() {
+    if (!audio) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      try { audio = new AC(); } catch (e) { return; }
+    }
+    if (audio.state === 'suspended') audio.resume();
+  }
+
+  function tone(freq, start, dur, vol, type = 'sine') {
+    const osc = audio.createOscillator();
+    const gain = audio.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, start);
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(vol, start + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    osc.connect(gain).connect(audio.destination);
+    osc.start(start);
+    osc.stop(start + dur + 0.02);
+  }
+
+  function playSound(kind) {
+    if (!audio || audio.state !== 'running') return;
+    const t = audio.currentTime;
+    if (kind === 'point') {                       // short "plim"
+      tone(1568, t, 0.16, 0.16);                  // G6
+      tone(2093, t + 0.05, 0.22, 0.12);           // C7
+    } else {                                      // prize: rising arpeggio
+      const notes = kind === 'blue'
+        ? [1047, 1319, 1568, 2093, 2637, 3136]    // C6 E6 G6 C7 E7 G7
+        : [1047, 1319, 1568, 2093];               // C6 E6 G6 C7
+      notes.forEach((f, i) => tone(f, t + i * 0.08, 0.3, 0.14, 'triangle'));
+    }
+  }
+
   // ---------- Canvas & scaling ----------
   const stage = document.getElementById('stage');
   const canvas = document.getElementById('game');
-  const ctx = canvas.getContext('2d');
-  let scale = 1;
+  const ctx = canvas.getContext('2d', { alpha: false });
+  const bgCanvas = document.createElement('canvas');   // sky + clouds, drawn once per resize
+  const bgCtx = bgCanvas.getContext('2d');
+  let W = 360, scale = 1, safeTop = 0;
+
+  // Reads the notch height (CSS px) through a hidden element
+  const safeProbe = document.createElement('div');
+  safeProbe.style.cssText =
+    'position:fixed;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top,0px)';
+  document.body.appendChild(safeProbe);
 
   function resize() {
-    // #stage excludes the safe-area insets (notch, home indicator)
-    const dpr = Math.min(window.devicePixelRatio || 1, 3);
-    scale = Math.min(stage.clientWidth / W, stage.clientHeight / H);
+    // DPR capped at 2: at 3x the canvas has twice the pixels for no visible gain
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const cw = stage.clientWidth, ch = stage.clientHeight;
+    W = Math.max(MIN_W, Math.min(MAX_W, H * cw / ch));   // not rounded: avoids 1px bars
+    scale = Math.min(cw / W, ch / H);
+    safeTop = (parseFloat(getComputedStyle(safeProbe).paddingTop) || 0) / scale;
     canvas.style.width = (W * scale) + 'px';
     canvas.style.height = (H * scale) + 'px';
-    canvas.width = Math.round(W * scale * dpr);
-    canvas.height = Math.round(H * scale * dpr);
+    canvas.width = bgCanvas.width = Math.round(W * scale * dpr);
+    canvas.height = bgCanvas.height = Math.round(H * scale * dpr);
     ctx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
+    bgCtx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
+    drawBackground(bgCtx);
   }
   window.addEventListener('resize', resize);
-  resize();
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', resize);
 
   // ---------- State ----------
-  let state, paused, bird, pipes, score, best, pipeTimer, groundDist, prevGroundDist, overTimer, playTime;
+  let state, paused, bird, pipes, pipeCount, score, best, pipeTimer, groundDist, prevGroundDist, overTimer, playTime, prize;
   best = loadBest();
 
   function reset() {
@@ -54,11 +120,13 @@
     bird.prevY = bird.y;
     bird.prevRot = bird.rot;
     pipes = [];
+    pipeCount = 0;
     score = 0;
     pipeTimer = 0;
     groundDist = prevGroundDist = 0;
     overTimer = 0;
     playTime = 0;
+    prize = null;                  // banner on screen: { kind, t }
   }
   reset();
 
@@ -77,10 +145,16 @@
     }
   }
   // Listen on the whole window so the letterbox bars also respond to taps
-  window.addEventListener('pointerdown', e => { e.preventDefault(); flap(); });
+  window.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    if (e.button > 0) return;      // ignore right/middle mouse buttons
+    unlockAudio();
+    flap();
+  }, { passive: false });
   window.addEventListener('keydown', e => {
     if (e.code === 'Space' || e.code === 'ArrowUp') {
       e.preventDefault();
+      unlockAudio();
       if (!e.repeat) flap();       // holding the key must not auto-flap
     }
   });
@@ -91,7 +165,19 @@
     const maxTop = H - GROUND_H - PIPE_GAP - 60;
     const top = minTop + Math.random() * (maxTop - minTop);
     const x = W + 10;
-    pipes.push({ x, prevX: x, top, passed: false });
+    const n = ++pipeCount;
+    pipes.push({ x, prevX: x, top, n, kind: PRIZE_PIPES[n] || null, passed: false });
+  }
+
+  function passPipe(p) {
+    p.passed = true;
+    score++;
+    if (p.kind) {
+      prize = { kind: p.kind, t: 0 };
+      playSound(p.kind);
+    } else {
+      playSound('point');
+    }
   }
 
   function gameOver() {
@@ -109,7 +195,7 @@
   }
 
   function hitsPipe(p) {
-    // circle vs. two rectangles
+    // circle vs. the pipe bodies and their wider lips
     const cx = bird.x, cy = bird.y, r = bird.r - 2;
     const bottomY = p.top + PIPE_GAP;
     const rects = [
@@ -136,6 +222,7 @@
   function update(dt) {
     savePrevious();
     bird.t += dt;
+    if (prize && (prize.t += dt) > PRIZE_TIME) prize = null;
 
     if (state !== 'over') groundDist += PIPE_SPEED * dt;
 
@@ -166,7 +253,7 @@
 
     for (const p of pipes) {
       p.x -= PIPE_SPEED * dt;
-      if (!p.passed && p.x + PIPE_W < bird.x) { p.passed = true; score++; }
+      if (!p.passed && p.x + PIPE_W < bird.x) passPipe(p);
       if (hitsPipe(p)) { gameOver(); return; }
     }
     pipes = pipes.filter(p => p.x + PIPE_W > -10);
@@ -181,21 +268,22 @@
   // ---------- Drawing ----------
   const lerp = (a, b, t) => a + (b - a) * t;
 
-  function drawBackground() {
-    const g = ctx.createLinearGradient(0, 0, 0, H);
+  function drawBackground(c) {
+    const g = c.createLinearGradient(0, 0, 0, H);
     g.addColorStop(0, getVar('--sky-top'));
     g.addColorStop(1, getVar('--sky-bottom'));
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
+    c.fillStyle = g;
+    c.fillRect(0, 0, W, H);
 
-    // simple clouds
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    [[60, 120], [230, 80], [300, 200], [140, 260]].forEach(([x, y]) => {
-      ctx.beginPath();
-      ctx.arc(x, y, 18, 0, Math.PI * 2);
-      ctx.arc(x + 20, y - 8, 22, 0, Math.PI * 2);
-      ctx.arc(x + 42, y, 16, 0, Math.PI * 2);
-      ctx.fill();
+    // simple clouds, spread over the current width
+    c.fillStyle = 'rgba(255,255,255,0.7)';
+    [[0.17, 120], [0.64, 80], [0.83, 200], [0.39, 260]].forEach(([fx, y]) => {
+      const x = fx * W;
+      c.beginPath();
+      c.arc(x, y, 18, 0, Math.PI * 2);
+      c.arc(x + 20, y - 8, 22, 0, Math.PI * 2);
+      c.arc(x + 42, y, 16, 0, Math.PI * 2);
+      c.fill();
     });
   }
 
@@ -203,15 +291,16 @@
     for (const p of pipes) {
       const x = lerp(p.prevX, p.x, alpha);
       const bottomY = p.top + PIPE_GAP;
-      ctx.fillStyle = getVar('--pipe');
+      const color = p.kind ? `--pipe-${p.kind}` : '--pipe';
+      ctx.fillStyle = getVar(color);
       ctx.fillRect(x, 0, PIPE_W, p.top);
       ctx.fillRect(x, bottomY, PIPE_W, H - GROUND_H - bottomY);
       // lips
-      ctx.fillStyle = getVar('--pipe-dark');
+      ctx.fillStyle = getVar(color + '-dark');
       ctx.fillRect(x - 4, p.top - 22, PIPE_W + 8, 22);
       ctx.fillRect(x - 4, bottomY, PIPE_W + 8, 22);
-      // highlight
-      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      // highlight (brighter on prize pipes)
+      ctx.fillStyle = p.kind ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.18)';
       ctx.fillRect(x + 8, 0, 8, p.top - 22);
       ctx.fillRect(x + 8, bottomY + 22, 8, H - GROUND_H - bottomY - 22);
     }
@@ -262,44 +351,67 @@
     ctx.fillText(str, x, y);
   }
 
+  function drawPrize() {
+    if (!prize) return;
+    const t = prize.t;
+    // pop in with a small overshoot, fade out at the end
+    const pop = t < 0.25 ? 1 + Math.sin(t / 0.25 * Math.PI) * 0.15 : 1;
+    const alpha = Math.min(1, t / 0.1, (PRIZE_TIME - t) / 0.4);
+    const w = Math.min(W - 32, 280), h = 44;
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, alpha);
+    ctx.translate(W / 2, safeTop + 130);
+    const s = Math.min(pop, t / 0.08);
+    ctx.scale(s, s);
+    ctx.fillStyle = getVar(`--pipe-${prize.kind}-dark`);
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(-w / 2, -h / 2, w, h, h / 2);
+    else ctx.rect(-w / 2, -h / 2, w, h);                       // iOS < 16
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = getVar(`--pipe-${prize.kind}`);
+    ctx.stroke();
+    text(PRIZE_TEXT[prize.kind], 0, 1, 20);
+    ctx.restore();
+  }
+
   function drawUI() {
+    const top = safeTop;           // keep the HUD below the notch
     if (paused) {
       ctx.fillStyle = 'rgba(0,0,0,0.35)';
       ctx.fillRect(0, 0, W, H);
-      text(String(score), W / 2, 70, 52);
+      text(String(score), W / 2, top + 70, 52);
       text('Pausa', W / 2, 220, 46);
       text('Toca para seguir', W / 2, 280, 22);
     } else if (state === 'playing') {
-      text(String(score), W / 2, 70, 52);
+      text(String(score), W / 2, top + 70, 52);
+      drawPrize();
     } else if (state === 'ready') {
-      text('Vuela', W / 2, 150, 54);
+      text('Vuela', W / 2, top + 150, 54);
       text('Toca para volar', W / 2, H / 2 + 60, 22);
       if (best > 0) text(`Récord: ${best}`, W / 2, H / 2 + 95, 18);
     } else if (state === 'over') {
       ctx.fillStyle = 'rgba(0,0,0,0.25)';
       ctx.fillRect(0, 0, W, H);
-      text('¡Fin!', W / 2, 170, 50);
-      text(`Puntos: ${score}`, W / 2, 245, 28);
-      text(`Récord: ${best}`, W / 2, 285, 22);
-      if (overTimer > 0.6) text('Toca para reintentar', W / 2, 360, 20);
+      text('¡Fin!', W / 2, top + 170, 50);
+      text(`Puntos: ${score}`, W / 2, top + 245, 28);
+      text(`Récord: ${best}`, W / 2, top + 285, 22);
+      if (overTimer > 0.6) text('Toca para reintentar', W / 2, top + 360, 20);
     }
-  }
-
-  const cssCache = {};
-  function getVar(name) {
-    if (!cssCache[name]) {
-      cssCache[name] = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-    }
-    return cssCache[name];
   }
 
   function render(alpha) {
-    drawBackground();
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.drawImage(bgCanvas, 0, 0);
+    ctx.restore();
     drawPipes(alpha);
     drawGround(alpha);
     drawBird(alpha);
     drawUI();
   }
+
+  resize();
 
   // ---------- Fixed-timestep loop ----------
   let last = performance.now();

@@ -5,6 +5,10 @@
   --ground-dark: #b8935a;
   --pipe: #2e9e5b;
   --pipe-dark: #1f7a43;
+  --pipe-gold: #f5c518;
+  --pipe-gold-dark: #c99700;
+  --pipe-blue: #3d8bfd;
+  --pipe-blue-dark: #1f5fc4;
   --bird: #ffcc33;
   --bird-dark: #e0a800;
 }
@@ -14,13 +18,11 @@ html, body {
   -webkit-user-select: none;
   user-select: none;
 }
-/* Area free of notches and home indicators; the canvas is fitted inside it. */
+/* Covers the whole screen, notch and home indicator included: the game
+   widens its world to the screen shape and keeps the HUD clear of the notch. */
 #stage {
   position: fixed;
-  top: env(safe-area-inset-top, 0px);
-  right: env(safe-area-inset-right, 0px);
-  bottom: env(safe-area-inset-bottom, 0px);
-  left: env(safe-area-inset-left, 0px);
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
