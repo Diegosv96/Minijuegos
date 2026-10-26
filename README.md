@@ -8,6 +8,7 @@ dentro del webview de una app móvil.
 | Juego | Ruta |
 |-------|------|
 | Vuela | [`vuela/`](vuela/) |
+| Sudoku 6×6 | [`sudoku/`](sudoku/) |
 
 ## Estructura
 
@@ -15,7 +16,9 @@ dentro del webview de una app móvil.
 index.html          menú de juegos
 shared/bridge.js    notify() y getToken(), comunes a todos los juegos
 shared/styles.css   estilos de marca comunes
+shared/sound.js     sonidos sintetizados (Web Audio), comunes a todos los juegos
 vuela/              juego "Vuela" (index.html, game.js, game.css)
+sudoku/             sudoku 6×6 con tres dificultades y premio según el tiempo
 ```
 
 ## Probar en local

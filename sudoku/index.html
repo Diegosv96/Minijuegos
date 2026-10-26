@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Sudoku</title>
+<link rel="stylesheet" href="../shared/styles.css">
+<link rel="stylesheet" href="game.css">
+</head>
+<body>
+<main>
+  <header class="top">
+    <h1>Sudoku</h1>
+    <div class="timer" id="timer" aria-live="off">00:00</div>
+  </header>
+
+  <div class="levels" id="levels" role="tablist">
+    <button type="button" data-level="easy">Fácil</button>
+    <button type="button" data-level="medium">Medio</button>
+    <button type="button" data-level="hard">Difícil</button>
+  </div>
+
+  <div class="board-wrap">
+    <div class="board" id="board" role="grid" aria-label="Tablero de sudoku 6 por 6"></div>
+    <div class="pause" id="pause" hidden>
+      <p>Pausa</p>
+      <span>Toca para seguir</span>
+    </div>
+  </div>
+
+  <p class="hint">Rellena cada fila, columna y bloque con los números del 1 al 6.</p>
+
+  <div class="pad" id="pad">
+    <button type="button" data-n="1">1</button>
+    <button type="button" data-n="2">2</button>
+    <button type="button" data-n="3">3</button>
+    <button type="button" data-n="4">4</button>
+    <button type="button" data-n="5">5</button>
+    <button type="button" data-n="6">6</button>
+    <button type="button" class="tool" data-action="undo">↶ Deshacer</button>
+    <button type="button" class="tool" data-action="erase">⌫ Borrar</button>
+    <button type="button" class="tool" data-action="new">↻ Nuevo</button>
+  </div>
+</main>
+
+<div class="win" id="win" hidden>
+  <div class="card" role="dialog" aria-labelledby="win-title">
+    <div class="medal" id="win-medal"></div>
+    <h2 id="win-title">¡Resuelto!</h2>
+    <p class="time" id="win-time"></p>
+    <p class="prize" id="win-prize"></p>
+    <p class="best" id="win-best"></p>
+    <button type="button" id="again">Jugar otra vez</button>
+  </div>
+</div>
+
+<script src="../shared/bridge.js"></script>
+<script src="../shared/sound.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

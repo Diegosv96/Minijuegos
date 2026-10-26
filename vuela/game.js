@@ -39,41 +39,16 @@
     return cssCache[name];
   }
 
-  // ---------- Sound (Web Audio, unlocked on the first tap) ----------
-  let audio = null;
-  function unlockAudio() {
-    if (!audio) {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if (!AC) return;
-      try { audio = new AC(); } catch (e) { return; }
-    }
-    if (audio.state === 'suspended') audio.resume();
-  }
-
-  function tone(freq, start, dur, vol, type = 'sine') {
-    const osc = audio.createOscillator();
-    const gain = audio.createGain();
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, start);
-    gain.gain.setValueAtTime(0.0001, start);
-    gain.gain.exponentialRampToValueAtTime(vol, start + 0.01);
-    gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
-    osc.connect(gain).connect(audio.destination);
-    osc.start(start);
-    osc.stop(start + dur + 0.02);
-  }
-
+  // ---------- Sound (shared/sound.js, unlocked on the first tap) ----------
   function playSound(kind) {
-    if (!audio || audio.state !== 'running') return;
-    const t = audio.currentTime;
     if (kind === 'point') {                       // short "plim"
-      tone(1568, t, 0.16, 0.16);                  // G6
-      tone(2093, t + 0.05, 0.22, 0.12);           // C7
+      sound.tone(1568, 0, 0.16, 0.16);            // G6
+      sound.tone(2093, 0.05, 0.22, 0.12);         // C7
     } else {                                      // prize: rising arpeggio
       const notes = kind === 'blue'
         ? [1047, 1319, 1568, 2093, 2637, 3136]    // C6 E6 G6 C7 E7 G7
         : [1047, 1319, 1568, 2093];               // C6 E6 G6 C7
-      notes.forEach((f, i) => tone(f, t + i * 0.08, 0.3, 0.14, 'triangle'));
+      notes.forEach((f, i) => sound.tone(f, i * 0.08, 0.3, 0.14, 'triangle'));
     }
   }
 
@@ -148,13 +123,13 @@
   window.addEventListener('pointerdown', e => {
     e.preventDefault();
     if (e.button > 0) return;      // ignore right/middle mouse buttons
-    unlockAudio();
+    sound.unlock();
     flap();
   }, { passive: false });
   window.addEventListener('keydown', e => {
     if (e.code === 'Space' || e.code === 'ArrowUp') {
       e.preventDefault();
-      unlockAudio();
+      sound.unlock();
       if (!e.repeat) flap();       // holding the key must not auto-flap
     }
   });
