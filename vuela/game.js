@@ -7,7 +7,7 @@
   const FLAP_V = -430;             // px/s
   const MAX_FALL = 700;            // px/s
   const PIPE_W = 64;
-  const PIPE_GAP = 120;            // vertical gap between top and bottom pipe
+  const PIPE_GAP = 130;            // vertical gap between top and bottom pipe
   const PIPE_SPEED = 160;          // px/s
   const PIPE_INTERVAL = 1.45;      // s between pipes
   const STEP = 1 / 60;             // fixed physics step
