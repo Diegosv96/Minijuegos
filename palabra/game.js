@@ -42,7 +42,7 @@
   // Lowercase, accents removed (ñ kept)
   function normalize(s) {
     return s.toLowerCase().replace(/ñ/g, '\u0001').normalize('NFD')
-      .replace(/[̀-ͯ]/g, '').replace(/\u0001/g, 'ñ');
+      .replace(/[\u0300-\u036f]/g, '').replace(/\u0001/g, 'ñ');
   }
 
   // 'correct' | 'present' | 'absent' per letter; repeated letters count only as often as in the answer
