@@ -24,7 +24,7 @@ vuela/              juego "Vuela" (index.html, game.js, game.css)
 sudoku/             sudoku 6×6 con tres dificultades y premio según el tiempo
 reinas/             una reina por fila, columna y región; 6×6 a 8×8, premio según el tiempo
 apila/              torre de bloques; premios al llegar a 10, 25, 50 y 100 bloques
-palabra/            palabra del día (5 letras, 6 intentos); words.js tiene las listas
+palabra/            palabra del día (5 letras, 6 intentos); words.js tiene las soluciones
 ```
 
 ## Probar en local

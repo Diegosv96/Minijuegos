@@ -1,6 +1,6 @@
 // Word lists for "Palabra del día". Five letters, lowercase, no accents (ñ is kept).
 // SOLUTIONS is shuffled once: the word of day N is SOLUTIONS[N % length].
-// EXTRA holds words that are accepted as guesses but never chosen as the answer.
+// Any five letters are accepted as a guess; this list only picks the answer.
 window.WORDS = {
   SOLUTIONS: [
     "verso", "error", "buceo", "alero", "perla", "veloz", "falso", "traje", "cinco", "color", "votar", "palco",
@@ -41,32 +41,5 @@ window.WORDS = {
     "potro", "vacio", "ficha", "yogur", "perro", "lecho", "golfo", "panda", "piano", "dolor", "lleno", "feria",
     "pieza", "diana", "lunes", "tecla", "letra", "paseo", "libre", "tabla", "etapa", "ojera", "cajon", "brazo",
     "mente", "limon", "tigre", "negro", "libro", "serie", "oxido", "denso", "guiso", "altar", "miedo"
-  ],
-  EXTRA: [
-    "abren", "abria", "acaso", "algun", "ambos", "amiga", "andar", "antes", "baila", "bailo", "barba", "baron",
-    "barra", "beber", "bebes", "bebio", "besos", "bocas", "bolso", "bombo", "botas", "boton", "brote", "buena",
-    "buzon", "cajas", "caldo", "calvo", "camas", "canta", "cante", "caras", "carne", "carro", "casas", "caspa",
-    "casta", "cenar", "cesar", "cesta", "cesto", "chica", "chico", "choza", "clase", "clavo", "cobra", "cocer",
-    "codos", "cojin", "comen", "comes", "copas", "corre", "cosas", "creer", "creia", "crudo", "cubos", "cueva",
-    "cuida", "cuido", "dados", "damos", "dando", "datos", "daños", "deben", "debes", "debia", "dedos", "dejar",
-    "dejas", "desde", "dicen", "digas", "dimos", "donde", "dueña", "entre", "estas", "estoy", "euros", "faena",
-    "falta", "fecha", "filas", "flota", "focos", "frase", "freno", "fresa", "frito", "gamba", "ganas", "gatos",
-    "gordo", "gotas", "grava", "haber", "habia", "hacen", "hacia", "hadas", "hagas", "hayan", "hecha", "hemos",
-    "higos", "hijas", "hijos", "hilos", "hojas", "hueso", "huida", "islas", "jamas", "joyas", "juega", "jugue",
-    "lados", "lagos", "lanza", "latas", "lavas", "leyes", "licor", "lirio", "llaga", "llamo", "llega", "lleva",
-    "llevo", "lobos", "loros", "luces", "lucir", "luego", "lunas", "mafia", "malas", "malla", "malos", "manda",
-    "mando", "manga", "manos", "mapas", "marea", "mares", "menor", "menos", "mesas", "mimos", "miras", "mixto",
-    "modos", "monja", "mosto", "mucha", "mucho", "mueca", "muere", "mueve", "murio", "nacio", "nadie", "nieta",
-    "nieto", "nivel", "niños", "notas", "novia", "nubes", "nudos", "nueve", "obvio", "oeste", "oigan", "oigas",
-    "ollas", "opaco", "osito", "otras", "otros", "pacto", "papas", "pardo", "pasos", "pasto", "patos", "pañal",
-    "pecar", "peces", "peral", "pesos", "picos", "pinar", "pinos", "pinta", "pipas", "plano", "plato", "pleno",
-    "pocas", "pocos", "polos", "ponga", "pongo", "puede", "puedo", "pulso", "puros", "puños", "queda", "quedo",
-    "queja", "quema", "racha", "rasgo", "ratas", "ratos", "rayos", "rejas", "reyes", "risas", "ritmo", "rizos",
-    "rocas", "rosas", "rosca", "rumor", "saben", "sabes", "sabia", "saldo", "sales", "salgo", "salon", "sigue",
-    "sitio", "sobra", "somos", "sopas", "sordo", "talon", "tanta", "tanto", "tapas", "tasca", "tazas", "temas",
-    "tengo", "tenia", "tiene", "tieso", "tipos", "todas", "todos", "tomas", "tonos", "toros", "trono", "tropa",
-    "tubos", "turbo", "usado", "vacas", "vagon", "valla", "vamos", "vasos", "vayan", "vemos", "venas", "vengo",
-    "venir", "veras", "viene", "vimos", "vinos", "visto", "viñas", "vocal", "voces", "yesos", "zarza", "zonas",
-    "zumos"
   ]
 };

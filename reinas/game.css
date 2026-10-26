@@ -41,8 +41,8 @@ button {
 }
 
 /* ---------- Header ---------- */
-.top { display: flex; align-items: center; justify-content: space-between; }
-.top h1 { font-size: 26px; }
+.top { display: flex; align-items: center; gap: 12px; }
+.top h1 { flex: 1; font-size: 26px; }
 .timer {
   font-size: 20px;
   font-weight: 700;
@@ -74,7 +74,9 @@ button {
 .board-wrap { position: relative; }
 .board {
   display: grid;
-  grid-template-columns: repeat(var(--n, 6), 1fr);
+  /* minmax(0, 1fr): every row and column stays the same size whatever the cell holds */
+  grid-template-columns: repeat(var(--n, 6), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--n, 6), minmax(0, 1fr));
   aspect-ratio: 1;
   border: 3px solid var(--line-strong);
   border-radius: 10px;
@@ -82,8 +84,12 @@ button {
   touch-action: none;              /* dragging marks cells instead of scrolling */
 }
 .cell {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
   display: grid;
   place-items: center;
+  line-height: 1;
   color: var(--mark);
   font-size: min(7vw, 28px);
   font-weight: 700;
@@ -105,7 +111,7 @@ button {
 .cell.conflict {
   background-image: repeating-linear-gradient(45deg, rgba(211, 47, 47, 0.28) 0 4px, transparent 4px 9px);
 }
-.cell.pop { animation: pop 0.18s ease-out; }
+.cell.pop svg { animation: pop 0.18s ease-out; }   /* the crown pops, not the cell */
 .board.solved .cell { animation: wave 0.5s ease-out var(--wave-delay, 0s) both; }
 
 .pause {

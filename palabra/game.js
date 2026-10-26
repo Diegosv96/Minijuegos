@@ -14,8 +14,7 @@
   ];
   const KEYS = ['qwertyuiop', 'asdfghjklñ', '<zxcvbnm>'];   // < enter, > backspace
 
-  const { SOLUTIONS, EXTRA } = window.WORDS;
-  const ALLOWED = new Set([...SOLUTIONS, ...EXTRA]);
+  const { SOLUTIONS } = window.WORDS;
 
   // ---------- Token supplied by the app (?token=...), see shared/bridge.js ----------
   const token = window.getToken();
@@ -204,7 +203,6 @@
   function submit() {
     if (done || busy) return;
     if (current.length < LEN) { shake(); toast('Faltan letras'); return; }
-    if (!ALLOWED.has(current)) { shake(); toast('No está en la lista'); return; }
 
     const guess = current;
     guesses.push(guess);

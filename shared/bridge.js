@@ -34,4 +34,10 @@
 
   window.notify = notify;
   window.getToken = getToken;
+
+  // Back-to-menu links keep ?token=... and must not reach the game's own tap handlers
+  document.querySelectorAll('a.back').forEach(a => {
+    a.href += location.search;
+    a.addEventListener('pointerdown', e => e.stopPropagation());
+  });
 })();

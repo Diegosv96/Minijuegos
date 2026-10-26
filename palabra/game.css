@@ -3,7 +3,7 @@
   --tile-filled: #6c6ca8;
   --correct: #3fa34d;
   --present: #d9a400;
-  --absent: #3a3a5e;
+  --absent: #12121f;               /* darker than the page so misses read as "used" */
   --key: #4a4a80;
   --gold: #f5c518;
   --silver: #c9ced6;
@@ -34,7 +34,8 @@ button {
 }
 
 /* ---------- Header ---------- */
-.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 8px; }
+.top { display: flex; align-items: center; gap: 12px; padding: 0 8px; }
+.top .title { flex: 1; min-width: 0; }
 .top h1 { font-size: 24px; }
 .mode { font-size: 14px; color: var(--brand-muted); margin-top: 2px; }
 .mode::first-letter { text-transform: uppercase; }
@@ -79,7 +80,7 @@ button {
 .tile.correct, .tile.present, .tile.absent { border-color: transparent; }
 .tile.correct { background: var(--correct); }
 .tile.present { background: var(--present); }
-.tile.absent { background: var(--absent); }
+.tile.absent { background: var(--absent); color: var(--brand-muted); }
 .tile.pop { animation: pop 0.1s ease-out; }
 .tile.flip { animation: flip 0.35s ease-in-out; }
 .tile.bounce { animation: bounce 0.5s ease-out both; }
@@ -95,6 +96,21 @@ button {
   font-weight: 700;
 }
 .toast[hidden] { display: none; }
+
+/* ---------- Colour legend ---------- */
+.legend {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 13px;
+  color: var(--brand-muted);
+}
+.legend span { display: flex; align-items: center; gap: 6px; }
+.legend i { width: 14px; height: 14px; border-radius: 3px; }
+.legend .correct { background: var(--correct); }
+.legend .present { background: var(--present); }
+.legend .absent { background: var(--absent); border: 1px solid var(--tile-border); }
 
 /* ---------- Keyboard ---------- */
 .keyboard { display: grid; gap: 6px; }

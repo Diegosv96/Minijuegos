@@ -18,3 +18,33 @@ html, body {
   font-family: var(--brand-font);
   -webkit-tap-highlight-color: transparent;
 }
+
+/* Back-to-menu button in every game (bridge.js keeps ?token=... on it) */
+.back {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--brand-surface);
+  color: var(--brand-text);
+}
+.back svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.back:active { transform: scale(0.92); }
+/* On top of the full-screen canvas games */
+.back.floating {
+  position: fixed;
+  z-index: 10;
+  top: calc(10px + env(safe-area-inset-top, 0px));
+  left: calc(10px + env(safe-area-inset-left, 0px));
+  background: rgba(0, 0, 0, 0.3);
+}

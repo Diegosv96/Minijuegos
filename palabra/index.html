@@ -10,7 +10,8 @@
 <body>
 <main>
   <header class="top">
-    <div>
+    <a class="back" href="../index.html" aria-label="Volver al menú"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <div class="title">
       <h1>Palabra del día</h1>
       <p class="mode" id="mode"></p>
     </div>
@@ -21,6 +22,12 @@
     <div class="board" id="board" aria-label="Intentos"></div>
     <div class="toast" id="toast" role="status" hidden></div>
   </div>
+
+  <p class="legend">
+    <span><i class="correct"></i>En su sitio</span>
+    <span><i class="present"></i>En otro sitio</span>
+    <span><i class="absent"></i>No está</span>
+  </p>
 
   <div class="keyboard" id="keyboard"></div>
 </main>
