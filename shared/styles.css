@@ -9,7 +9,9 @@
   --text: var(--brand-text);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* manipulation: taps and scrolling work, double-tap and pinch zoom do not
+   (canvas and the queens board use touch-action: none, which wins over this) */
+* { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; }
 
 html, body {
   height: 100%;
