@@ -1,0 +1,20 @@
+/* Common brand styles shared by the menu and every game. */
+:root {
+  --brand-bg: #1a1a2e;
+  --brand-surface: #25254a;
+  --brand-accent: #ffcc33;
+  --brand-text: #ffffff;
+  --brand-muted: #b9b9d6;
+  --brand-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --text: var(--brand-text);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  background: var(--brand-bg);
+  color: var(--brand-text);
+  font-family: var(--brand-font);
+  -webkit-tap-highlight-color: transparent;
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Minijuegos</title>
+<link rel="stylesheet" href="shared/styles.css">
+<style>
+  body {
+    padding: calc(24px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+  main { max-width: 480px; margin: 0 auto; }
+  h1 { font-size: 28px; margin-bottom: 20px; }
+  .games { list-style: none; display: grid; gap: 12px; }
+  .game {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px; border-radius: 14px;
+    background: var(--brand-surface);
+    color: inherit; text-decoration: none;
+  }
+  .game:active { transform: scale(0.98); }
+  .game .icon {
+    flex: none; width: 52px; height: 52px; border-radius: 12px;
+    display: grid; place-items: center; font-size: 28px;
+    background: var(--brand-accent);
+  }
+  .game h2 { font-size: 18px; }
+  .game p { font-size: 14px; color: var(--brand-muted); margin-top: 2px; }
+  .game.soon { opacity: 0.5; pointer-events: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Minijuegos</h1>
+  <ul class="games">
+    <li>
+      <a class="game" href="vuela/index.html">
+        <span class="icon" aria-hidden="true">🐤</span>
+        <div><h2>Vuela</h2><p>Toca para volar entre los tubos.</p></div>
+      </a>
+    </li>
+    <li>
+      <div class="game soon">
+        <span class="icon" aria-hidden="true">🔢</span>
+        <div><h2>Sudoku</h2><p>Próximamente</p></div>
+      </div>
+    </li>
+  </ul>
+</main>
+<script>
+  // Keep ?token=... when opening a game from the menu
+  if (location.search) {
+    document.querySelectorAll('a.game').forEach(a => { a.href += location.search; });
+  }
+</script>
+</body>
+</html>
