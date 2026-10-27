@@ -90,7 +90,9 @@
     const cw = stage.clientWidth, ch = stage.clientHeight;
     W = Math.max(MIN_W, Math.min(MAX_W, H * cw / ch));   // not rounded: avoids 1px bars
     scale = Math.min(cw / W, ch / H);
-    safeTop = (parseFloat(getComputedStyle(safeProbe).paddingTop) || 0) / scale;
+    // only the part of the notch the stage actually reaches (none from the home screen)
+    const notch = parseFloat(getComputedStyle(safeProbe).paddingTop) || 0;
+    safeTop = Math.max(0, notch - stage.getBoundingClientRect().top) / scale;
     canvas.style.width = (W * scale) + 'px';
     canvas.style.height = (H * scale) + 'px';
     canvas.width = bgCanvas.width = Math.round(W * scale * dpr);

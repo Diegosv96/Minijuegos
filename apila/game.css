@@ -38,9 +38,19 @@ html, body {
   top: 0;
   left: 0;
   right: 0;
-  height: var(--app-h, 100%);     /* shared/viewport.js fixes iOS home-screen apps */
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+/* Opened from the home screen the game starts below the status bar, like a
+   normal app. iOS often reports a viewport short by that bar (793 of 852), so
+   the height comes from the real screen (--app-h, shared/viewport.js) and is
+   capped by the viewport. */
+@media (display-mode: standalone) {
+  #stage {
+    top: env(safe-area-inset-top, 0px);
+    height: min(100%, calc(var(--app-h, 100% + env(safe-area-inset-top, 0px)) - env(safe-area-inset-top, 0px)));
+  }
 }
 canvas { display: block; touch-action: none; }

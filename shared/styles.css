@@ -32,12 +32,10 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Solid strip under the status bar. Safari on iPhone tints its top bar with
-   the colour of a fixed element touching the top edge; without one it leaves
-   the bar white and blurs the content scrolling under it. Each page sets
-   --topbar to the colour at the top of its screen. It must stay hit-testable
-   (no pointer-events: none): Safari finds it by hit testing the top edge and
-   otherwise falls back to a washed-out blur. */
+/* Solid strip under the status bar, in the colour at the top of the current
+   screen (each page sets --topbar). In Safari it tints the browser's top bar;
+   opened from the home screen it fills the status bar zone, which pages and
+   full-screen games keep clear of (see #stage in the games). */
 body::before {
   content: "";
   position: fixed;
@@ -47,12 +45,10 @@ body::before {
   right: 0;
   height: max(env(safe-area-inset-top, 0px), 4px);
   background: var(--topbar, var(--brand-bg));
+  pointer-events: none;
 }
-/* Opened from the home screen the page runs under the status bar
-   (black-translucent in every page), whose icons are always white,
-   so the strip behind them is always the brand green. */
 @media (display-mode: standalone) {
-  body::before { height: env(safe-area-inset-top, 0px); background: var(--brand-primary); }
+  body::before { height: env(safe-area-inset-top, 0px); }
 }
 
 /* Back-to-menu button in every game (bridge.js keeps ?token=... on it) */
