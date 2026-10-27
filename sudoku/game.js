@@ -3,6 +3,7 @@
   const GAME_ID = 'sudoku';
   const N = 6;                     // 6x6 board, digits 1-6
   const BOX_R = 2, BOX_C = 3;      // blocks of 2 rows x 3 columns
+  const FRUITS = ['', '🍎', '🍌', '🍇', '🍊', '🥝', '🍓'];   // shown instead of digits 1-6
 
   // givens: numbers shown at the start (fewer = harder)
   // prizes: max seconds for gold, silver and bronze
@@ -198,7 +199,7 @@
     const selPeers = selected >= 0 ? new Set(peers[selected]) : new Set();
     const selValue = selected >= 0 ? grid[selected] : 0;
     cells.forEach((el, i) => {
-      el.textContent = grid[i] || '';
+      el.textContent = FRUITS[grid[i]];
       el.classList.toggle('given', puzzle[i] !== 0);
       el.classList.toggle('selected', i === selected);
       el.classList.toggle('peer', selPeers.has(i));
@@ -266,7 +267,7 @@
     const isRecord = !prevBest || ms < prevBest;
     if (isRecord) save(bestKey, Math.round(ms));
 
-    document.getElementById('win-medal').textContent = prize ? prize.icon : '🧩';
+    document.getElementById('win-medal').textContent = prize ? prize.icon : '🧺';
     document.getElementById('win-time').textContent = formatTime(ms);
     const prizeEl = document.getElementById('win-prize');
     prizeEl.textContent = prize ? prize.name : 'Sin premio esta vez';

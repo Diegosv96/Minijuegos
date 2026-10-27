@@ -15,7 +15,7 @@
     { id: 'bronze', name: 'Premio bronce', icon: '🥉' }
   ];
   const EMPTY = 0, MARK = 1, QUEEN = 2;   // a tap cycles empty -> mark -> queen -> empty
-  const CROWN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>';
+  const PIG = '<span class="pig" aria-hidden="true">\u{1F437}</span>';   // same piglet as the menu icon
 
   // ---------- Token supplied by the app (?token=...), see shared/bridge.js ----------
   const token = window.getToken();
@@ -247,7 +247,7 @@
       const m = marks[i];
       if (+el.dataset.m !== m) {
         el.dataset.m = m;
-        el.innerHTML = m === QUEEN ? CROWN : m === MARK ? '×' : '';
+        el.innerHTML = m === QUEEN ? PIG : m === MARK ? '×' : '';
       }
       el.classList.toggle('conflict', bad.has(i));
     });
@@ -307,7 +307,7 @@
     const isRecord = !prevBest || ms < prevBest;
     if (isRecord) save(bestKey, Math.round(ms));
 
-    document.getElementById('win-medal').textContent = prize ? prize.icon : '👑';
+    document.getElementById('win-medal').textContent = prize ? prize.icon : '🍎';
     document.getElementById('win-time').textContent = formatTime(ms);
     const prizeEl = document.getElementById('win-prize');
     prizeEl.textContent = prize ? prize.name : 'Sin premio esta vez';

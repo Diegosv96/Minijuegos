@@ -1,16 +1,32 @@
 :root {
-  --sky-top: #6ec6ff;
-  --sky-bottom: #c8ecff;
-  --ground: #d9b77a;
-  --ground-dark: #b8935a;
-  --pipe: #2e9e5b;
-  --pipe-dark: #1f7a43;
-  --pipe-gold: #f5c518;
-  --pipe-gold-dark: #c99700;
-  --pipe-blue: #3d8bfd;
-  --pipe-blue-dark: #1f5fc4;
-  --bird: #ffcc33;
-  --bird-dark: #e0a800;
+  --sky-top: #5fb8ec;
+  --sky-bottom: #cdeeff;
+  --cloud: #ffffff;
+  --ground: #e4ebe5;
+  --ground-dark: var(--brand-green);
+  /* shelves: body, end boards and the products on them */
+  --pipe: #a7afb4;                 /* metal shelving */
+  --pipe-dark: #5f686d;
+  --pipe-wood: #b98450;            /* wooden fruit stands */
+  --pipe-wood-dark: #6b4423;
+  --pipe-gold: var(--brand-yellow);
+  --pipe-gold-dark: #d9940f;
+  --pipe-super: var(--brand-red);
+  --pipe-super-dark: #9c1f2b;
+  --item-yellow: var(--brand-yellow);
+  --item-red: var(--brand-red);
+  --item-orange: #f39a4a;
+  --item-green: #8fc27a;
+  --item-water: #8fc9ea;
+  --item-white: #ffffff;
+  --face: rgba(59, 42, 42, 0.8);
+  --leaf: #4f9a3c;
+  --cart: var(--brand-green);
+  --cart-wire: #ffffff;
+  --wing: var(--brand-yellow);
+  --wing-dark: #d9940f;
+  --text: var(--brand-green);
+  --text-outline: #ffffff;
 }
 html, body {
   overflow: hidden;

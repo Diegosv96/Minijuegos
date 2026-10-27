@@ -1,45 +1,20 @@
-// Word lists for "Palabra del día". Five letters, lowercase, no accents (ñ is kept).
+// Word lists for "Artículo del súper". Five letters, lowercase, no accents (ñ is kept).
+// All solutions are about shopping, food and the kitchen.
 // SOLUTIONS is shuffled once: the word of day N is SOLUTIONS[N % length].
 // Any five letters are accepted as a guess; this list only picks the answer.
 window.WORDS = {
   SOLUTIONS: [
-    "verso", "error", "buceo", "alero", "perla", "veloz", "falso", "traje", "cinco", "color", "votar", "palco",
-    "lento", "oruga", "audio", "cobre", "marzo", "valor", "bahia", "cerdo", "vigor", "mundo", "abeja", "aguja",
-    "quien", "dedal", "acero", "pobre", "fumar", "flojo", "marco", "opera", "nacer", "barco", "vivir", "lista",
-    "cielo", "roble", "norte", "calma", "suelo", "jaula", "milla", "pinza", "polvo", "sueño", "baile", "envio",
-    "pista", "pulpo", "rollo", "himno", "grito", "gorro", "rampa", "mejor", "tarde", "trama", "subir", "pilar",
-    "tenso", "canto", "nuevo", "poema", "papel", "prima", "jabon", "junio", "pizza", "curva", "lider", "verde",
-    "sacar", "rodeo", "gusto", "picar", "deseo", "fuera", "leche", "viaje", "tenor", "helio", "grano", "asado",
-    "lucha", "moral", "exito", "texto", "rival", "zanja", "lugar", "cofre", "fuego", "ducha", "disco", "flaco",
-    "clave", "grupo", "trigo", "bello", "video", "brisa", "poder", "mirar", "turno", "sobre", "libra", "volar",
-    "medio", "caida", "queso", "noble", "truco", "junto", "cable", "cinta", "secar", "dicha", "crema", "metro",
-    "campo", "salsa", "hielo", "calor", "echar", "globo", "oreja", "lacio", "radio", "quiza", "lejos", "ayuda",
-    "ganar", "ideal", "hotel", "guion", "capaz", "besar", "playa", "surco", "zorro", "tejer", "talla", "llave",
-    "lavar", "hongo", "amigo", "cacao", "olivo", "avena", "fluir", "rubio", "julio", "natal", "corto", "dulce",
-    "cuota", "siglo", "nadar", "pausa", "ancho", "furia", "remar", "parar", "llano", "coral", "garra", "pecho",
-    "arroz", "rural", "magia", "ahora", "actor", "razon", "nunca", "primo", "album", "plomo", "canal", "zarpa",
-    "mayor", "fideo", "epoca", "cruce", "genio", "hogar", "gasto", "oveja", "enero", "vista", "fauna", "grifo",
-    "casco", "madre", "prado", "señal", "trago", "bingo", "arbol", "recto", "hueco", "debil", "metal", "vieja",
-    "tumba", "salto", "riego", "salir", "cuero", "gnomo", "tango", "broma", "horno", "morir", "humor", "resto",
-    "mosca", "nariz", "viudo", "ruido", "coche", "drama", "torre", "museo", "venta", "plaza", "tarta", "icono",
-    "orden", "banda", "mover", "jarra", "huevo", "viola", "banco", "pluma", "folio", "siete", "tonto", "sabor",
-    "plata", "calle", "tirar", "techo", "tacon", "gafas", "barro", "cifra", "soñar", "melon", "ocaso", "fallo",
-    "vapor", "patio", "clima", "villa", "tocar", "cerca", "mujer", "forro", "vicio", "burro", "tarea", "sauna",
-    "rango", "rumbo", "oliva", "menta", "pollo", "legal", "pagar", "reina", "bravo", "local", "tomar", "pasta",
-    "dueño", "grado", "igual", "gripe", "bolsa", "justo", "temor", "mismo", "danza", "copia", "carta", "linea",
-    "abrir", "telar", "joven", "pasar", "pesca", "grasa", "hasta", "sucio", "untar", "lindo", "fondo", "tenis",
-    "polen", "silla", "suave", "moler", "decir", "flora", "mareo", "nieve", "puñal", "dieta", "jugar", "arena",
-    "hacha", "macho", "gallo", "tinta", "golpe", "selva", "habla", "union", "raton", "gramo", "bruja", "causa",
-    "torta", "rezar", "duelo", "bomba", "trapo", "matiz", "feliz", "final", "circo", "facil", "punto", "tribu",
-    "enano", "gente", "extra", "pared", "atlas", "robar", "labio", "fiera", "llama", "gorra", "honor", "hacer",
-    "leona", "conde", "renta", "litro", "noche", "yegua", "angel", "rugby", "novio", "solar", "viejo", "palma",
-    "canoa", "manta", "fango", "cisne", "grave", "fibra", "yerno", "valle", "comer", "largo", "naipe", "atomo",
-    "mango", "espia", "sable", "parte", "virus", "regla", "marca", "forma", "tallo", "salud", "bueno", "senda",
-    "monte", "santo", "fijar", "trato", "sabio", "pavor", "hecho", "fruta", "reloj", "padre", "super", "mania",
-    "rueda", "balon", "cebra", "firma", "socio", "naval", "doble", "peine", "cazar", "prisa", "laico", "delta",
-    "costa", "jamon", "avion", "farol", "falda", "lapiz", "motor", "poeta", "guapo", "poner", "mitad", "juego",
-    "potro", "vacio", "ficha", "yogur", "perro", "lecho", "golfo", "panda", "piano", "dolor", "lleno", "feria",
-    "pieza", "diana", "lunes", "tecla", "letra", "paseo", "libre", "tabla", "etapa", "ojera", "cajon", "brazo",
-    "mente", "limon", "tigre", "negro", "libro", "serie", "oxido", "denso", "guiso", "altar", "miedo"
+    "bolsa", "asado", "hielo", "menta", "lejia", "socio", "comer", "donut", "berza", "aguas", "cobro", "papas",
+    "lacon", "trufa", "untar", "trigo", "peine", "sanos", "queso", "pelar", "pipas", "tique", "ñoqui", "barra",
+    "filas", "leche", "cupon", "setas", "pañal", "cafes", "ollas", "sacos", "tarta", "pollo", "caqui", "vales",
+    "tapas", "acido", "dieta", "peras", "mesas", "bollo", "kefir", "horno", "copos", "crema", "carne", "grano",
+    "natas", "judia", "huevo", "vinos", "jalea", "arroz", "dulce", "limas", "sidra", "kilos", "higos", "lista",
+    "jamon", "licor", "picar", "tosta", "habas", "lomos", "freir", "pasta", "papel", "cenar", "datil", "sobre",
+    "hongo", "migas", "panes", "sepia", "latas", "mosto", "zumos", "pagar", "pates", "trozo", "ramos", "ganga",
+    "tarro", "tazas", "cocos", "pomos", "vasos", "batir", "nabos", "yogur", "cesta", "cajas", "sabor", "pulpo",
+    "coles", "pieza", "tinto", "menus", "tomar", "cerdo", "oliva", "curry", "fruta", "litro", "limon", "moras",
+    "lonja", "sopas", "botes", "caldo", "gramo", "plato", "punto", "avena", "clavo", "ricos", "melon", "dados",
+    "pesto", "cuajo", "kiwis", "mango", "rosca", "crepe", "salsa", "fresa", "gofre", "cacao", "cocer", "carro",
+    "fideo", "pizza", "fuego", "gamba", "jabon"
   ]
 };

@@ -1,11 +1,11 @@
 :root {
-  --tile-border: #3b3b6b;
-  --tile-filled: #6c6ca8;
-  --correct: #3fa34d;
-  --present: #d9a400;
-  --absent: #12121f;               /* darker than the page so misses read as "used" */
-  --key: #4a4a80;
-  --gold: #f5c518;
+  --tile-border: var(--brand-border);
+  --tile-filled: var(--brand-muted);
+  --correct: var(--brand-green);
+  --present: var(--brand-yellow);
+  --absent: #7f9184;               /* grey-green: "used, not in the word" */
+  --key: var(--brand-surface);
+  --gold: var(--brand-yellow);
   --silver: #c9ced6;
   --bronze: #d58a4a;
 }
@@ -78,9 +78,9 @@ button {
 }
 .tile.filled { border-color: var(--tile-filled); }
 .tile.correct, .tile.present, .tile.absent { border-color: transparent; }
-.tile.correct { background: var(--correct); }
-.tile.present { background: var(--present); }
-.tile.absent { background: var(--absent); color: var(--brand-muted); }
+.tile.correct { background: var(--correct); color: var(--brand-white); }
+.tile.present { background: var(--present); color: var(--brand-on-accent); }
+.tile.absent { background: var(--absent); color: var(--brand-white); }
 .tile.pop { animation: pop 0.1s ease-out; }
 .tile.flip { animation: flip 0.35s ease-in-out; }
 .tile.bounce { animation: bounce 0.5s ease-out both; }
@@ -110,7 +110,7 @@ button {
 .legend i { width: 14px; height: 14px; border-radius: 3px; }
 .legend .correct { background: var(--correct); }
 .legend .present { background: var(--present); }
-.legend .absent { background: var(--absent); border: 1px solid var(--tile-border); }
+.legend .absent { background: var(--absent); }
 
 /* ---------- Keyboard ---------- */
 .keyboard { display: grid; gap: 6px; }
@@ -127,9 +127,9 @@ button {
 }
 .krow button.wide { flex: 1.6; max-width: 70px; font-size: 13px; }
 .krow button[data-key="back"] { font-size: 20px; }
-.krow button[data-state="correct"] { background: var(--correct); }
+.krow button[data-state="correct"] { background: var(--correct); color: var(--brand-white); }
 .krow button[data-state="present"] { background: var(--present); }
-.krow button[data-state="absent"] { background: var(--absent); color: var(--brand-muted); }
+.krow button[data-state="absent"] { background: var(--absent); color: var(--brand-white); }
 .krow button:active, .switch:active { transform: scale(0.94); }
 
 /* ---------- End dialog ---------- */
@@ -139,7 +139,7 @@ button {
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgba(10, 10, 25, 0.6);
+  background: var(--overlay);
   animation: fade 0.2s ease-out;
 }
 .win[hidden] { display: none; }
@@ -149,7 +149,9 @@ button {
   padding: 28px 24px 24px;
   border-radius: 20px;
   text-align: center;
-  background: var(--brand-surface);
+  background: var(--brand-bg);
+  box-shadow: 0 12px 40px rgba(42, 81, 53, 0.35);
+  border-top: 6px solid var(--brand-accent);
   animation: pop-in 0.35s cubic-bezier(.2, 1.6, .4, 1);
 }
 .medal { font-size: 64px; line-height: 1; }
@@ -161,13 +163,13 @@ button {
   padding: 6px 14px;
   border-radius: 999px;
   font-weight: 700;
-  color: var(--brand-bg);
-  background: var(--brand-muted);
+  color: var(--brand-muted);
+  background: var(--brand-surface);
 }
 .card .prize[hidden] { display: none; }
-.card .prize.gold { background: var(--gold); }
-.card .prize.silver { background: var(--silver); }
-.card .prize.bronze { background: var(--bronze); }
+.card .prize.gold { background: var(--gold); color: var(--brand-on-accent); }
+.card .prize.silver { background: var(--silver); color: var(--brand-on-accent); }
+.card .prize.bronze { background: var(--bronze); color: var(--brand-white); }
 .card .next { margin-top: 12px; font-size: 14px; color: var(--brand-muted); }
 .card .next[hidden] { display: none; }
 .card .next strong { color: var(--brand-text); font-variant-numeric: tabular-nums; }
@@ -177,7 +179,7 @@ button {
   padding: 14px;
   border-radius: 12px;
   font-weight: 700;
-  color: var(--brand-bg);
+  color: var(--brand-on-accent);
   background: var(--brand-accent);
 }
 .card button.secondary { margin-top: 8px; background: transparent; color: var(--brand-muted); }

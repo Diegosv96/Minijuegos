@@ -1,0 +1,70 @@
+:root {
+  --sky-top: #7fcaf3;
+  --sky-bottom: #dff3ff;
+  --cloud: #ffffff;
+  /* supermarket front */
+  --wall: #f3e9d8;
+  --wall-dark: #ddc9a8;
+  --glass: #bfe3f2;
+  --glass-shine: rgba(255, 255, 255, 0.55);
+  --frame: #6f7b80;
+  --awning: var(--brand-green);
+  --sign: var(--brand-yellow);
+  --sign-text: var(--brand-green);
+  /* car park */
+  --sidewalk: #d6dadc;
+  --curb: #9aa3a8;
+  --asphalt: #646b70;
+  --paint: #f4f4f4;
+  --lamp: #4a5256;
+  --lamp-light: #fff4c2;
+  /* the cart */
+  --cart: var(--brand-green);
+  --cart-wire: #ffffff;
+  --item-red: var(--brand-red);
+  --item-green: #8fc27a;
+  --bread: #d9963f;
+  --shadow: rgba(0, 0, 0, 0.22);
+  /* obstacles */
+  --skin: #f2c7a5;
+  --hair: #6b4423;
+  --bag: #ffffff;
+  --face: rgba(59, 42, 42, 0.85);
+  --tyre: #2f3437;
+  --hubcap: #c9ced6;
+  --car-1: #e85d5d;
+  --car-2: #4f8fd6;
+  --car-3: #f2b134;
+  --car-4: #8fc27a;
+  --car-5: #b98be0;
+  --van: #ffffff;
+  --van-stripe: var(--brand-green);
+  --shirt-1: var(--brand-red);
+  --shirt-2: #4f8fd6;
+  --shirt-3: var(--brand-yellow);
+  --shirt-4: #b98be0;
+  --trousers: #3d4a6b;
+  /* prize banner */
+  --prize-gold: var(--brand-yellow);
+  --prize-gold-dark: #d9940f;
+  --prize-super: var(--brand-red);
+  --prize-super-dark: #9c1f2b;
+  --text: var(--brand-green);
+  --text-outline: #ffffff;
+}
+html, body {
+  overflow: hidden;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+/* Covers the whole screen, notch and home indicator included: the game
+   widens its world to the screen shape and keeps the HUD clear of the notch. */
+#stage {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+canvas { display: block; touch-action: none; }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Sudoku</title>
+<title>Sudoku de frutas</title>
 <link rel="stylesheet" href="../shared/styles.css">
 <link rel="stylesheet" href="game.css">
 </head>
@@ -11,7 +11,7 @@
 <main>
   <header class="top">
     <a class="back" href="../index.html" aria-label="Volver al menú"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
-    <h1>Sudoku</h1>
+    <h1>Sudoku de frutas</h1>
     <div class="timer" id="timer" aria-live="off">00:00</div>
   </header>
 
@@ -22,22 +22,22 @@
   </div>
 
   <div class="board-wrap">
-    <div class="board" id="board" role="grid" aria-label="Tablero de sudoku 6 por 6"></div>
+    <div class="board" id="board" role="grid" aria-label="Tablero de sudoku de frutas 6 por 6"></div>
     <div class="pause" id="pause" hidden>
       <p>Pausa</p>
       <span>Toca para seguir</span>
     </div>
   </div>
 
-  <p class="hint">Rellena cada fila, columna y bloque con los números del 1 al 6.</p>
+  <p class="hint">Pon las seis frutas en cada fila, columna y caja, sin repetir ninguna.</p>
 
   <div class="pad" id="pad">
-    <button type="button" data-n="1">1</button>
-    <button type="button" data-n="2">2</button>
-    <button type="button" data-n="3">3</button>
-    <button type="button" data-n="4">4</button>
-    <button type="button" data-n="5">5</button>
-    <button type="button" data-n="6">6</button>
+    <button type="button" data-n="1" class="fruit">🍎</button>
+    <button type="button" data-n="2" class="fruit">🍌</button>
+    <button type="button" data-n="3" class="fruit">🍇</button>
+    <button type="button" data-n="4" class="fruit">🍊</button>
+    <button type="button" data-n="5" class="fruit">🥝</button>
+    <button type="button" data-n="6" class="fruit">🍓</button>
     <button type="button" class="tool" data-action="undo">↶ Deshacer</button>
     <button type="button" class="tool" data-action="erase">⌫ Borrar</button>
     <button type="button" class="tool" data-action="new">↻ Nuevo</button>

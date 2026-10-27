@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Reinas</title>
+<title>Cerditos</title>
 <link rel="stylesheet" href="../shared/styles.css">
 <link rel="stylesheet" href="game.css">
 </head>
@@ -11,7 +11,7 @@
 <main>
   <header class="top">
     <a class="back" href="../index.html" aria-label="Volver al menú"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
-    <h1>Reinas</h1>
+    <h1>Cerditos</h1>
     <div class="timer" id="timer" aria-live="off">00:00</div>
   </header>
 
@@ -29,8 +29,8 @@
     </div>
   </div>
 
-  <p class="hint">Una reina por fila, columna y color, sin que se toquen (ni en diagonal).
-    Toca una vez para marcar ×, dos para poner reina. Arrastra para marcar varias.</p>
+  <p class="hint">Pon un cerdito en cada fila, columna y corral de la granja, sin que se toquen (ni en diagonal).
+    Toca una vez para marcar ×, dos para poner cerdito. Arrastra para marcar varias.</p>
 
   <div class="tools" id="tools">
     <button type="button" data-action="undo">↶ Deshacer</button>
@@ -42,7 +42,7 @@
 <div class="win" id="win" hidden>
   <div class="card" role="dialog" aria-labelledby="win-title">
     <div class="medal" id="win-medal"></div>
-    <h2 id="win-title">¡Resuelto!</h2>
+    <h2 id="win-title">¡Cosecha completa!</h2>
     <p class="time" id="win-time"></p>
     <p class="prize" id="win-prize"></p>
     <p class="best" id="win-best"></p>

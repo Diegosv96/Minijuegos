@@ -15,10 +15,12 @@
   const GRAVITY = 1500;            // px/s² for the cut-off pieces
   const STEP = 1 / 60;             // fixed physics step
   const GAME_ID = 'apila';
+  // Sandwich layers, from the bottom: bread again every LAYERS.length levels
+  const LAYERS = ['bread', 'cheese', 'tomato', 'lettuce', 'ham'];
 
   // Blocks that give a prize when placed (block number -> kind)
-  const PRIZE_BLOCKS = { 10: 'gold', 25: 'gold', 50: 'gold', 100: 'blue' };
-  const PRIZE_TEXT = { gold: '¡Has ganado un premio!', blue: '¡Premio superior!' };
+  const PRIZE_BLOCKS = { 10: 'gold', 25: 'gold', 50: 'gold', 100: 'super' };
+  const PRIZE_TEXT = { gold: '¡Has ganado un premio!', super: '¡Premio superior!' };
   const PRIZE_TIME = 2.2;          // s the prize banner stays on screen
 
   // ---------- Token supplied by the app (?token=...), see shared/bridge.js ----------
@@ -54,7 +56,7 @@
       sound.tone(220, 0, 0.25, 0.16, 'sawtooth');
       sound.tone(147, 0.12, 0.35, 0.14, 'sawtooth');
     } else {                                      // prize: rising arpeggio
-      const notes = kind === 'blue'
+      const notes = kind === 'super'
         ? [1047, 1319, 1568, 2093, 2637, 3136]    // C6 E6 G6 C7 E7 G7
         : [1047, 1319, 1568, 2093];               // C6 E6 G6 C7
       notes.forEach((f, i) => sound.tone(f, i * 0.08, 0.3, 0.14, 'triangle'));
@@ -92,15 +94,14 @@
   // ---------- State ----------
   // Block positions are in world units: x from the left edge, level 0 is the base.
   let state, paused, tower, moving, pieces, score, best, streak, perfects, camY, prevCamY,
-      hue, overTimer, playTime, prize, flash;
+      overTimer, playTime, prize, flash;
   best = loadBest();
 
   function reset() {
     state = 'ready';               // ready | playing | over
     paused = false;
-    hue = Math.floor(Math.random() * 360);
     const w = Math.min(BASE_W, W * 0.6);
-    tower = [{ x: (W - w) / 2, w, hue }];
+    tower = [{ x: (W - w) / 2, w, layer: LAYERS[0] }];
     moving = null;
     pieces = [];                   // cut-off parts falling away
     score = 0;
@@ -122,7 +123,7 @@
     const top = tower[tower.length - 1];
     const fromLeft = tower.length % 2 === 1;
     const x = fromLeft ? -top.w : W;
-    moving = { x, prevX: x, w: top.w, dir: fromLeft ? 1 : -1, hue: (hue + tower.length * 8) % 360 };
+    moving = { x, prevX: x, w: top.w, dir: fromLeft ? 1 : -1, layer: LAYERS[tower.length % LAYERS.length] };
   }
 
   // Screen y of the top edge of a tower level
@@ -168,7 +169,7 @@
     const left = Math.max(b.x, top.x), right = Math.min(b.x + b.w, top.x + top.w);
     const overlap = right - left;
     if (overlap <= 0) {            // missed the tower completely
-      pieces.push({ x: b.x, w: b.w, level, hue: b.hue, y: 0, prevY: 0, vy: 0, rot: 0, prevRot: 0, vr: b.dir * 1.5 });
+      pieces.push({ x: b.x, w: b.w, level, layer: b.layer, y: 0, prevY: 0, vy: 0, rot: 0, prevRot: 0, vr: b.dir * 1.5 });
       gameOver();
       return;
     }
@@ -179,16 +180,16 @@
       perfects++;
       let w = top.w;
       if (streak >= PERFECT_STREAK) w = Math.min(BASE_W, w + PERFECT_GROW);   // reward streaks
-      placed = { x: top.x - (w - top.w) / 2, w, hue: b.hue };
+      placed = { x: top.x - (w - top.w) / 2, w, layer: b.layer };
       flash = { level, t: 0 };
       playSound('perfect', streak);
     } else {
       streak = 0;
-      placed = { x: left, w: overlap, hue: b.hue };
+      placed = { x: left, w: overlap, layer: b.layer };
       // the overhanging part falls off
       const cutX = b.x < top.x ? b.x : right;
       const cutW = b.w - overlap;
-      pieces.push({ x: cutX, w: cutW, level, hue: b.hue, y: 0, prevY: 0, vy: 0, rot: 0, prevRot: 0,
+      pieces.push({ x: cutX, w: cutW, level, layer: b.layer, y: 0, prevY: 0, vy: 0, rot: 0, prevRot: 0,
                     vr: (b.x < top.x ? -1 : 1) * (1 + Math.random()) });
       playSound('place');
     }
@@ -266,13 +267,60 @@
     ctx.fillRect(0, 0, W, H);
   }
 
-  function drawBlock(x, y, w, h) {
-    // top face lighter, bottom edge darker for a bit of depth
-    ctx.fillRect(x, y, w, h);
-    ctx.fillStyle = 'rgba(255,255,255,0.22)';
-    ctx.fillRect(x, y, w, 5);
-    ctx.fillStyle = 'rgba(0,0,0,0.18)';
-    ctx.fillRect(x, y + h - 5, w, 5);
+  // One sandwich layer; the pattern starts at x so it moves with the block
+  function drawBlock(x, y, w, h, layer) {
+    const radius = Math.min(layer === 'bread' ? 12 : 6, w / 2, h / 2);
+    ctx.save();
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x, y, w, h, radius);
+    else ctx.rect(x, y, w, h);                                 // iOS < 16
+    ctx.fillStyle = getVar('--' + layer);
+    ctx.fill();
+    ctx.clip();
+    if (layer === 'bread') {                   // golden crust with diagonal cuts
+      ctx.fillStyle = getVar('--bread-top');
+      ctx.fillRect(x, y, w, 9);
+      ctx.fillStyle = getVar('--bread-score');
+      for (let sx = x + 16; sx < x + w - 6; sx += 28) {
+        ctx.beginPath(); ctx.ellipse(sx, y + h * 0.42, 9, 3, -0.45, 0, Math.PI * 2); ctx.fill();
+      }
+    } else if (layer === 'cheese') {           // holes
+      ctx.fillStyle = getVar('--cheese-hole');
+      for (let i = 0, hx = x + 10; hx < x + w; i++, hx += 22) {
+        ctx.beginPath(); ctx.arc(hx, y + h * (i % 2 ? 0.32 : 0.66), 3.5 + (i % 3), 0, Math.PI * 2); ctx.fill();
+      }
+    } else if (layer === 'tomato') {           // slices with seeds
+      ctx.fillStyle = getVar('--tomato-in');
+      for (let tx = x + 4; tx < x + w; tx += 34) {
+        ctx.beginPath(); ctx.ellipse(tx + 13, y + h / 2, 12, h / 2 - 5, 0, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.fillStyle = getVar('--tomato-seed');
+      for (let tx = x + 4; tx < x + w; tx += 34) {
+        for (const d of [-5, 0, 5]) {
+          ctx.beginPath(); ctx.ellipse(tx + 13 + d, y + h / 2 + (d ? 2 : -2), 1.6, 2.6, 0, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+    } else if (layer === 'lettuce') {          // curly top edge and veins
+      ctx.fillStyle = getVar('--lettuce-light');
+      for (let lx = x; lx < x + w + 8; lx += 14) {
+        ctx.beginPath(); ctx.arc(lx, y + 3, 8, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let lx = x + 10; lx < x + w; lx += 20) { ctx.moveTo(lx, y + h - 3); ctx.lineTo(lx + 6, y + 9); }
+      ctx.stroke();
+    } else if (layer === 'ham') {              // wavy strip of fat
+      ctx.strokeStyle = getVar('--ham-fat');
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x, y + h * 0.5);
+      for (let i = 0, hx = x; hx < x + w; i++, hx += 12) ctx.quadraticCurveTo(hx + 6, y + h * (i % 2 ? 0.3 : 0.7), hx + 12, y + h * 0.5);
+      ctx.stroke();
+    }
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';        // shade at the bottom for depth
+    ctx.fillRect(x, y + h - 4, w, 4);
+    ctx.restore();
   }
 
   function drawTower(cam) {
@@ -282,20 +330,21 @@
       const b = tower[i];
       const y = levelY(i, cam);
       if (y > H) continue;
-      ctx.fillStyle = `hsl(${b.hue} 70% 58%)`;
-      drawBlock(b.x, y, b.w, BLOCK_H);
+      drawBlock(b.x, y, b.w, BLOCK_H, b.layer);
     }
     // the base continues down to the bottom of the screen
     const baseBottom = levelY(0, cam) + BLOCK_H;
     if (baseBottom < H) {
-      ctx.fillStyle = getVar('--ground');
+      ctx.fillStyle = getVar('--ground');           // counter the sandwich sits on
       ctx.fillRect(0, baseBottom, W, H - baseBottom);
+      ctx.fillStyle = getVar('--ground-stripe');
+      ctx.fillRect(0, baseBottom, W, 5);
     }
     if (flash) {
       const b = tower[flash.level];
       ctx.save();
       ctx.globalAlpha = 1 - flash.t / 0.4;
-      ctx.strokeStyle = '#fff';
+      ctx.strokeStyle = getVar('--flash');
       ctx.lineWidth = 3;
       const grow = flash.t * 30;
       ctx.strokeRect(b.x - grow, levelY(flash.level, cam) - grow, b.w + grow * 2, BLOCK_H + grow * 2);
@@ -305,8 +354,7 @@
 
   function drawMoving(alpha, cam) {
     if (!moving) return;
-    ctx.fillStyle = `hsl(${moving.hue} 70% 58%)`;
-    drawBlock(lerp(moving.prevX, moving.x, alpha), levelY(tower.length, cam), moving.w, BLOCK_H);
+    drawBlock(lerp(moving.prevX, moving.x, alpha), levelY(tower.length, cam), moving.w, BLOCK_H, moving.layer);
   }
 
   function drawPieces(alpha, cam) {
@@ -315,8 +363,7 @@
       ctx.save();
       ctx.translate(p.x + p.w / 2, y + BLOCK_H / 2);
       ctx.rotate(lerp(p.prevRot, p.rot, alpha));
-      ctx.fillStyle = `hsl(${p.hue} 70% 58%)`;
-      drawBlock(-p.w / 2, -BLOCK_H / 2, p.w, BLOCK_H);
+      drawBlock(-p.w / 2, -BLOCK_H / 2, p.w, BLOCK_H, p.layer);
       ctx.restore();
     }
   }
@@ -326,10 +373,10 @@
     ctx.textAlign = align;
     ctx.textBaseline = 'middle';
     ctx.lineWidth = Math.max(3, size / 8);
-    ctx.strokeStyle = 'rgba(0,0,0,0.45)';
-    ctx.strokeText(str, x, y);
+    ctx.strokeStyle = getVar('--text-outline');
+    ctx.strokeText(str, x, y, W - 32);   // shrinks to fit narrow screens
     ctx.fillStyle = getVar('--text');
-    ctx.fillText(str, x, y);
+    ctx.fillText(str, x, y, W - 32);
   }
 
   function drawPrize() {
@@ -359,7 +406,7 @@
   function drawUI() {
     const top = safeTop;           // keep the HUD below the notch
     if (paused) {
-      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
       ctx.fillRect(0, 0, W, H);
       text(String(score), W / 2, top + 70, 52);
       text('Pausa', W / 2, 220, 46);
@@ -368,14 +415,14 @@
       text(String(score), W / 2, top + 70, 52);
       drawPrize();
     } else if (state === 'ready') {
-      text('Apila', W / 2, top + 150, 54);
-      text('Toca para soltar el bloque', W / 2, top + 215, 20);
+      text('Sándwich gigante', W / 2, top + 150, 42);
+      text('Toca para soltar el ingrediente', W / 2, top + 215, 20);
       if (best > 0) text(`Récord: ${best}`, W / 2, top + 250, 18);
     } else if (state === 'over') {
-      ctx.fillStyle = 'rgba(0,0,0,0.25)';
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.fillRect(0, 0, W, H);
       text('¡Fin!', W / 2, top + 150, 50);
-      text(`Bloques: ${score}`, W / 2, top + 225, 28);
+      text(`Capas: ${score}`, W / 2, top + 225, 28);
       text(`Récord: ${best}`, W / 2, top + 265, 22);
       if (overTimer > 0.6) text('Toca para reintentar', W / 2, top + 330, 20);
     }

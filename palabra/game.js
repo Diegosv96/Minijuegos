@@ -115,7 +115,7 @@
     busy = false;
     winEl.hidden = true;
     modeEl.textContent = practice ? 'Práctica · sin premio' : formatDay();
-    switchEl.textContent = practice ? 'Palabra del día' : 'Practicar';
+    switchEl.textContent = practice ? 'Artículo del día' : 'Practicar';
     tiles.flat().forEach(t => { t.textContent = ''; t.className = 'tile'; t.style.animationDelay = ''; });
     Object.values(keyEls).forEach(k => k.removeAttribute('data-state'));
 
@@ -235,11 +235,11 @@
     const tier = won ? PRIZE_TRIES.findIndex(max => attempts <= max) : -1;
     const prize = !practice && tier >= 0 ? PRIZES[tier] : null;
 
-    document.getElementById('win-medal').textContent = prize ? prize.icon : won ? '🎉' : '📖';
+    document.getElementById('win-medal').textContent = prize ? prize.icon : won ? '🎉' : '🧺';
     document.getElementById('win-title').textContent = won ? '¡Acertaste!' : 'Otra vez será';
     document.getElementById('win-detail').textContent = won
       ? `En ${attempts} ${attempts === 1 ? 'intento' : 'intentos'}`
-      : `La palabra era ${answer.toUpperCase()}`;
+      : `El artículo era ${answer.toUpperCase()}`;
     const prizeEl = document.getElementById('win-prize');
     prizeEl.hidden = practice;
     prizeEl.textContent = prize ? prize.name : 'Sin premio esta vez';

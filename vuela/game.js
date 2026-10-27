@@ -13,9 +13,9 @@
   const STEP = 1 / 60;             // fixed physics step
   const GAME_ID = 'vuela';
 
-  // Pipes that give a prize when passed (pipe number -> kind)
-  const PRIZE_PIPES = { 10: 'gold', 25: 'gold', 50: 'gold', 100: 'blue' };
-  const PRIZE_TEXT = { gold: '¡Has ganado un premio!', blue: '¡Premio superior!' };
+  // Shelves that give a prize when passed (pipe number -> kind)
+  const PRIZE_PIPES = { 10: 'gold', 25: 'gold', 50: 'gold', 100: 'super' };
+  const PRIZE_TEXT = { gold: '¡Has ganado un premio!', super: '¡Premio superior!' };
   const PRIZE_TIME = 2.2;          // s the prize banner stays on screen
 
   // ---------- Token supplied by the app (?token=...), see shared/bridge.js ----------
@@ -45,7 +45,7 @@
       sound.tone(1568, 0, 0.16, 0.16);            // G6
       sound.tone(2093, 0.05, 0.22, 0.12);         // C7
     } else {                                      // prize: rising arpeggio
-      const notes = kind === 'blue'
+      const notes = kind === 'super'
         ? [1047, 1319, 1568, 2093, 2637, 3136]    // C6 E6 G6 C7 E7 G7
         : [1047, 1319, 1568, 2093];               // C6 E6 G6 C7
       notes.forEach((f, i) => sound.tone(f, i * 0.08, 0.3, 0.14, 'triangle'));
@@ -56,7 +56,7 @@
   const stage = document.getElementById('stage');
   const canvas = document.getElementById('game');
   const ctx = canvas.getContext('2d', { alpha: false });
-  const bgCanvas = document.createElement('canvas');   // sky + clouds, drawn once per resize
+  const bgCanvas = document.createElement('canvas');   // sky gradient, drawn once per resize
   const bgCtx = bgCanvas.getContext('2d');
   let W = 360, scale = 1, safeTop = 0;
 
@@ -249,35 +249,154 @@
     g.addColorStop(1, getVar('--sky-bottom'));
     c.fillStyle = g;
     c.fillRect(0, 0, W, H);
+  }
 
-    // simple clouds, spread over the current width
-    c.fillStyle = 'rgba(255,255,255,0.7)';
-    [[0.17, 120], [0.64, 80], [0.83, 200], [0.39, 260]].forEach(([fx, y]) => {
-      const x = fx * W;
+  // Clouds drift past slower than the shelves (parallax): [position in the loop, y, size, speed]
+  const CLOUDS = [[0.05, 90, 1.1, 0.25], [0.38, 170, 0.8, 0.18], [0.62, 60, 0.9, 0.22],
+                  [0.85, 250, 1.2, 0.3], [0.22, 330, 0.7, 0.15], [0.7, 400, 1, 0.26]];
+  function drawClouds(alpha) {
+    const dist = lerp(prevGroundDist, groundDist, alpha);
+    const span = W + 160;
+    ctx.fillStyle = getVar('--cloud');
+    for (const [fx, y, sz, speed] of CLOUDS) {
+      const x = ((fx * span - dist * speed) % span + span) % span - 80;
+      ctx.beginPath();
+      ctx.arc(x - 22 * sz, y + 6 * sz, 16 * sz, 0, Math.PI * 2);
+      ctx.arc(x, y - 4 * sz, 22 * sz, 0, Math.PI * 2);
+      ctx.arc(x + 24 * sz, y + 6 * sz, 15 * sz, 0, Math.PI * 2);
+      ctx.rect(x - 22 * sz, y + 6 * sz, 46 * sz, 16 * sz);
+      ctx.fill();
+    }
+  }
+
+  // Supermarket sections: every shelf holds one product repeated, packed tight,
+  // and each board of the shelf takes the next colour of its section
+  const SHELF_H = 38;
+  const SECTIONS = [
+    { kind: 'bottle', w: 9,  colors: ['--item-water', '--item-orange', '--item-red'] },     // drinks
+    { kind: 'box',    w: 12, colors: ['--item-yellow', '--item-red', '--item-orange'] },    // cereal
+    { kind: 'can',    w: 10, colors: ['--item-red', '--item-green', '--item-yellow'] },     // tins
+    { kind: 'carton', w: 11, colors: ['--item-white', '--item-water', '--item-yellow'] },   // dairy
+    { kind: 'fruit',  w: 10, colors: ['--item-orange', '--item-red', '--item-green'], wood: true }
+  ];
+
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x, y, w, h, r);
+    else ctx.rect(x, y, w, h);
+    ctx.fill();
+  }
+
+  // Little smiling face centred on (cx, cy), sized to the product width
+  function drawFace(cx, cy, w) {
+    const e = w * 0.22;
+    ctx.fillStyle = getVar('--face');
+    ctx.beginPath();
+    ctx.arc(cx - e, cy, 1, 0, Math.PI * 2);
+    ctx.arc(cx + e, cy, 1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = getVar('--face');
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy + 1, w * 0.18, 0.2 * Math.PI, 0.8 * Math.PI);
+    ctx.stroke();
+  }
+
+  function drawProduct(kind, x, board, w) {
+    const c = ctx, cx = x + w / 2;
+    if (kind === 'bottle') {                     // rounded body, neck and cap
+      roundRect(x, board - 25, w, 25, 4);
+      roundRect(cx - 2, board - 31, 4, 8, 1.5);
+      c.fillStyle = 'rgba(255,255,255,0.4)';
+      roundRect(x + 1.5, board - 22, 2, 8, 1);
+      drawFace(cx, board - 11, w);
+    } else if (kind === 'box') {                 // tall box with a label
+      roundRect(x, board - 32, w, 32, 3);
+      c.fillStyle = 'rgba(255,255,255,0.6)';
+      roundRect(x + 1.5, board - 24, w - 3, 11, 2);
+      drawFace(cx, board - 20, w);
+    } else if (kind === 'can') {                 // short can with a band
+      roundRect(x, board - 15, w, 15, 3);
+      c.fillStyle = 'rgba(255,255,255,0.6)';
+      c.fillRect(x, board - 11, w, 6);
+      drawFace(cx, board - 9, w);
+    } else if (kind === 'carton') {              // carton with a gable top
+      roundRect(x, board - 25, w, 25, 2.5);
       c.beginPath();
-      c.arc(x, y, 18, 0, Math.PI * 2);
-      c.arc(x + 20, y - 8, 22, 0, Math.PI * 2);
-      c.arc(x + 42, y, 16, 0, Math.PI * 2);
+      c.moveTo(x + 0.5, board - 24); c.lineTo(cx, board - 31); c.lineTo(x + w - 0.5, board - 24);
       c.fill();
-    });
+      c.fillStyle = 'rgba(255,255,255,0.45)';
+      roundRect(x + 1.5, board - 18, w - 3, 9, 2);
+      drawFace(cx, board - 14, w);
+    } else {                                     // round fruit with a leaf
+      c.beginPath();
+      c.arc(cx, board - w / 2, w / 2, 0, Math.PI * 2);
+      c.fill();
+      c.fillStyle = getVar('--leaf');
+      c.beginPath();
+      c.ellipse(cx + 1.5, board - w - 0.5, 2.2, 1.1, -0.5, 0, Math.PI * 2);
+      c.fill();
+      drawFace(cx, board - w / 2, w);
+    }
+  }
+
+  // Products standing on the shelf boards between y0 and y1; boards are counted
+  // from the gap outwards so they line up with the end board
+  function drawShelfItems(x, y0, y1, n, fromBottom) {
+    const sec = SECTIONS[n % SECTIONS.length];
+    const gap = 1, inner = PIPE_W - 6;
+    const step = sec.w + gap;
+    const count = Math.floor((inner + gap) / step);
+    const start = x + 3 + (inner - (count * step - gap)) / 2;   // centred row
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, y0, PIPE_W, y1 - y0);
+    ctx.clip();
+    for (let sh = 0; sh * SHELF_H < y1 - y0; sh++) {
+      const board = fromBottom ? y1 - sh * SHELF_H : y0 + (sh + 1) * SHELF_H;
+      ctx.fillStyle = 'rgba(0,0,0,0.25)';
+      ctx.fillRect(x, board - 3, PIPE_W, 3);
+      const color = getVar(sec.colors[sh % sec.colors.length]);
+      // cans stack two high, fruit piles up in three rows, the rest stand in one
+      const layers = sec.kind === 'can' ? 2 : sec.kind === 'fruit' ? 3 : 1;
+      for (let l = 0; l < layers; l++) {
+        const shift = sec.kind === 'fruit' ? l * 0.5 : 0;
+        const lift = sec.kind === 'fruit' ? l * sec.w * 0.85 : l * 15;
+        for (let k = 0; k < count - (sec.kind === 'fruit' ? l : 0); k++) {
+          ctx.fillStyle = color;
+          drawProduct(sec.kind, start + (k + shift) * step, board - 3 - lift, sec.w);
+        }
+      }
+    }
+    ctx.restore();
+  }
+
+  // Plank seams for the wooden fruit stands
+  function drawWood(x, y, h) {
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    for (let px = x + 16; px < x + PIPE_W; px += 16) ctx.fillRect(px, y, 2, h);
   }
 
   function drawPipes(alpha) {
     for (const p of pipes) {
       const x = lerp(p.prevX, p.x, alpha);
       const bottomY = p.top + PIPE_GAP;
-      const color = p.kind ? `--pipe-${p.kind}` : '--pipe';
+      const wood = !p.kind && SECTIONS[p.n % SECTIONS.length].wood;
+      const color = p.kind ? `--pipe-${p.kind}` : wood ? '--pipe-wood' : '--pipe';
+      const bottomH = H - GROUND_H - bottomY;
       ctx.fillStyle = getVar(color);
       ctx.fillRect(x, 0, PIPE_W, p.top);
-      ctx.fillRect(x, bottomY, PIPE_W, H - GROUND_H - bottomY);
-      // lips
+      ctx.fillRect(x, bottomY, PIPE_W, bottomH);
+      if (wood) { drawWood(x, 0, p.top); drawWood(x, bottomY, bottomH); }
+      drawShelfItems(x, 0, p.top - 22, p.n, true);
+      drawShelfItems(x, bottomY + 22, H - GROUND_H, p.n, false);
+      // end boards with a price strip
       ctx.fillStyle = getVar(color + '-dark');
       ctx.fillRect(x - 4, p.top - 22, PIPE_W + 8, 22);
       ctx.fillRect(x - 4, bottomY, PIPE_W + 8, 22);
-      // highlight (brighter on prize pipes)
-      ctx.fillStyle = p.kind ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.18)';
-      ctx.fillRect(x + 8, 0, 8, p.top - 22);
-      ctx.fillRect(x + 8, bottomY + 22, 8, H - GROUND_H - bottomY - 22);
+      ctx.fillStyle = p.kind ? 'rgba(255,255,255,0.55)' : getVar('--item-yellow');
+      ctx.fillRect(x + 6, p.top - 15, PIPE_W - 12, 8);
+      ctx.fillRect(x + 6, bottomY + 7, PIPE_W - 12, 8);
     }
   }
 
@@ -288,8 +407,13 @@
     ctx.fillRect(0, y, W, GROUND_H);
     ctx.fillStyle = getVar('--ground-dark');
     ctx.fillRect(0, y, W, 6);
+    // floor tiles scrolling with the shelves
+    ctx.fillStyle = 'rgba(42,81,53,0.08)';
     for (let x = offset; x < W; x += 24) {
-      ctx.fillRect(x, y + 6, 12, 6);
+      for (let ty = y + 6; ty < H; ty += 24) {
+        ctx.fillRect(x, ty, 12, 12);
+        ctx.fillRect(x + 12, ty + 12, 12, 12);
+      }
     }
   }
 
@@ -297,21 +421,52 @@
     ctx.save();
     ctx.translate(bird.x, lerp(bird.prevY, bird.y, alpha));
     ctx.rotate(lerp(bird.prevRot, bird.rot, alpha));
-    // body
-    ctx.fillStyle = getVar('--bird');
-    ctx.beginPath(); ctx.arc(0, 0, bird.r, 0, Math.PI * 2); ctx.fill();
-    // wing (flaps while alive)
-    const wingY = state === 'over' ? 2 : Math.sin(bird.t * 18) * 4;
-    ctx.fillStyle = getVar('--bird-dark');
-    ctx.beginPath(); ctx.ellipse(-4, wingY + 2, 8, 5, 0, 0, Math.PI * 2); ctx.fill();
-    // eye
-    ctx.fillStyle = '#fff';
-    ctx.beginPath(); ctx.arc(6, -5, 5, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#222';
-    ctx.beginPath(); ctx.arc(7.5, -5, 2.4, 0, Math.PI * 2); ctx.fill();
-    // beak
-    ctx.fillStyle = '#ff7a2f';
-    ctx.beginPath(); ctx.moveTo(12, 0); ctx.lineTo(22, 3); ctx.lineTo(12, 7); ctx.closePath(); ctx.fill();
+    // shopping cart with wings, about the size of the collision circle
+    const flapA = state === 'over' ? 0.2 : Math.sin(bird.t * 18) * 0.6;
+    // back wing (flaps while alive)
+    ctx.save();
+    ctx.translate(-4, -8);
+    ctx.rotate(-0.5 + flapA);
+    ctx.fillStyle = getVar('--wing-dark');
+    ctx.beginPath(); ctx.ellipse(-8, 0, 11, 5, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    // shopping peeking out of the basket
+    ctx.fillStyle = getVar('--item-red');
+    ctx.beginPath(); ctx.arc(-5, -9, 5, 0, Math.PI * 2); ctx.fill();          // apple
+    ctx.fillStyle = getVar('--item-green');
+    ctx.fillRect(1, -15, 4, 9);                                               // leek
+    ctx.save();
+    ctx.translate(8, -10); ctx.rotate(0.5);
+    ctx.fillStyle = '#d9963f';
+    ctx.fillRect(-2.5, -8, 5, 14);                                            // baguette
+    ctx.restore();
+    // basket: trapezoid with a wire grid
+    ctx.fillStyle = getVar('--cart');
+    ctx.beginPath();
+    ctx.moveTo(-15, -6); ctx.lineTo(14, -6); ctx.lineTo(10, 7); ctx.lineTo(-11, 7);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = getVar('--cart-wire');
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    for (const gx of [-7, 0, 7]) { ctx.moveTo(gx, -5); ctx.lineTo(gx * 0.85, 6); }
+    ctx.moveTo(-13, 0.5); ctx.lineTo(12, 0.5);
+    ctx.stroke();
+    // handle, frame and wheels
+    ctx.strokeStyle = getVar('--cart');
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(-15, -6); ctx.lineTo(-19, -12); ctx.lineTo(-23, -12); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-11, 7); ctx.lineTo(-9, 10); ctx.lineTo(9, 10); ctx.stroke();
+    ctx.fillStyle = getVar('--cart');
+    ctx.beginPath(); ctx.arc(-7, 13, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(7, 13, 3, 0, Math.PI * 2); ctx.fill();
+    // front wing
+    ctx.save();
+    ctx.translate(2, -6);
+    ctx.rotate(-0.3 + flapA);
+    ctx.fillStyle = getVar('--wing');
+    ctx.beginPath(); ctx.ellipse(-9, 0, 12, 5.5, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
     ctx.restore();
   }
 
@@ -320,7 +475,7 @@
     ctx.textAlign = align;
     ctx.textBaseline = 'middle';
     ctx.lineWidth = Math.max(3, size / 8);
-    ctx.strokeStyle = 'rgba(0,0,0,0.45)';
+    ctx.strokeStyle = getVar('--text-outline');
     ctx.strokeText(str, x, y);
     ctx.fillStyle = getVar('--text');
     ctx.fillText(str, x, y);
@@ -353,7 +508,7 @@
   function drawUI() {
     const top = safeTop;           // keep the HUD below the notch
     if (paused) {
-      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
       ctx.fillRect(0, 0, W, H);
       text(String(score), W / 2, top + 70, 52);
       text('Pausa', W / 2, 220, 46);
@@ -362,11 +517,11 @@
       text(String(score), W / 2, top + 70, 52);
       drawPrize();
     } else if (state === 'ready') {
-      text('Vuela', W / 2, top + 150, 54);
+      text('Carro volador', W / 2, top + 150, 44);
       text('Toca para volar', W / 2, H / 2 + 60, 22);
       if (best > 0) text(`Récord: ${best}`, W / 2, H / 2 + 95, 18);
     } else if (state === 'over') {
-      ctx.fillStyle = 'rgba(0,0,0,0.25)';
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.fillRect(0, 0, W, H);
       text('¡Fin!', W / 2, top + 170, 50);
       text(`Puntos: ${score}`, W / 2, top + 245, 28);
@@ -380,6 +535,7 @@
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.drawImage(bgCanvas, 0, 0);
     ctx.restore();
+    drawClouds(alpha);
     drawPipes(alpha);
     drawGround(alpha);
     drawBird(alpha);

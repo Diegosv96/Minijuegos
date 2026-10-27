@@ -3,67 +3,114 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Minijuegos</title>
+<title>Juega y gana</title>
 <link rel="stylesheet" href="shared/styles.css">
 <style>
-  body {
-    padding: calc(24px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px));
+  body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
+  /* Green band at the top with the title, like a shop awning */
+  .hero {
+    position: relative;
+    padding: calc(28px + env(safe-area-inset-top, 0px)) 16px 40px;
+    background: var(--brand-primary);
+    color: var(--brand-white);
   }
-  main { max-width: 480px; margin: 0 auto; }
-  h1 { font-size: 28px; margin-bottom: 20px; }
+  .hero::after {                   /* scalloped edge of the awning */
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -12px;
+    height: 12px;
+    background: radial-gradient(circle at 12px 0, var(--brand-primary) 11px, transparent 12px) 0 0 / 24px 12px repeat-x;
+  }
+  .hero div { max-width: 480px; margin: 0 auto; }
+  .hero h1 { font-size: 30px; }
+  .hero h1 span { color: var(--brand-accent); }
+  .hero p { margin-top: 4px; font-size: 15px; opacity: 0.85; }
+  main { max-width: 480px; margin: 0 auto; padding: 28px 16px 0; }
   .games { list-style: none; display: grid; gap: 12px; }
   .game {
     display: flex; align-items: center; gap: 14px;
-    padding: 16px; border-radius: 14px;
-    background: var(--brand-surface);
+    padding: 14px; border-radius: 16px;
+    background: var(--brand-bg);
+    border: 1px solid var(--brand-border);
+    box-shadow: 0 2px 6px rgba(42, 81, 53, 0.08);
     color: inherit; text-decoration: none;
   }
   .game:active { transform: scale(0.98); }
   .game .icon {
-    flex: none; width: 52px; height: 52px; border-radius: 12px;
-    display: grid; place-items: center; font-size: 28px;
+    flex: none; width: 56px; height: 56px; border-radius: 14px;
+    display: grid; place-items: center; font-size: 30px;
     background: var(--brand-accent);
   }
+  .game div { flex: 1; min-width: 0; }
   .game h2 { font-size: 18px; }
   .game p { font-size: 14px; color: var(--brand-muted); margin-top: 2px; }
-  .game.soon { opacity: 0.5; pointer-events: none; }
+  .game .go {
+    flex: none; width: 32px; height: 32px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--brand-primary); color: var(--brand-white);
+  }
+  .game .go svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .game .tag {
+    display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 999px;
+    font-size: 11px; font-weight: 700; vertical-align: 2px;
+    background: var(--brand-red); color: var(--brand-white);
+  }
+  .note { margin-top: 20px; font-size: 13px; text-align: center; color: var(--brand-muted); }
 </style>
 </head>
 <body>
+<header class="hero">
+  <div>
+    <h1>Juega y <span>gana</span></h1>
+    <p>Minijuegos para socios. ¡Cada partida suma!</p>
+  </div>
+</header>
 <main>
-  <h1>Minijuegos</h1>
   <ul class="games">
     <li>
       <a class="game" href="vuela/index.html">
-        <span class="icon" aria-hidden="true">🐤</span>
-        <div><h2>Vuela</h2><p>¡Toca para volar!</p></div>
-      </a>
-    </li>
-    <li>
-      <a class="game" href="sudoku/index.html">
-        <span class="icon" aria-hidden="true">🔢</span>
-        <div><h2>Sudoku</h2><p>¡Complétalo lo antes posible!</p></div>
-      </a>
-    </li>
-    <li>
-      <a class="game" href="reinas/index.html">
-        <span class="icon" aria-hidden="true">👑</span>
-        <div><h2>Reinas</h2><p>Una por fila, columna y color</p></div>
+        <span class="icon" aria-hidden="true">🛒</span>
+        <div><h2>Carro volador</h2><p>Vuela entre las estanterías</p></div>
+        <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></span>
       </a>
     </li>
     <li>
       <a class="game" href="apila/index.html">
-        <span class="icon" aria-hidden="true">🧱</span>
-        <div><h2>Apila</h2><p>¡Haz la torre más alta!</p></div>
+        <span class="icon" aria-hidden="true">🥪</span>
+        <div><h2>Sándwich gigante</h2><p>Apila los ingredientes sin que se caigan</p></div>
+        <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></span>
+      </a>
+    </li>
+    <li>
+      <a class="game" href="reinas/index.html">
+        <span class="icon" aria-hidden="true">🐷</span>
+        <div><h2>Cerditos</h2><p>Uno por fila, columna y corral de la granja</p></div>
+        <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></span>
+      </a>
+    </li>
+    <li>
+      <a class="game" href="sudoku/index.html">
+        <span class="icon" aria-hidden="true">🍓</span>
+        <div><h2>Sudoku de frutas</h2><p>Sin repetir fruta en fila, columna ni caja</p></div>
+        <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></span>
+      </a>
+    </li>
+    <li>
+      <a class="game" href="parking/index.html">
+        <span class="icon" aria-hidden="true">🚗</span>
+        <div><h2>Carrito a la fuga</h2><p>Salta clientes y coches del aparcamiento</p></div>
+        <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></span>
       </a>
     </li>
     <li>
       <a class="game" href="palabra/index.html">
-        <span class="icon" aria-hidden="true">🔤</span>
-        <div><h2>Palabra del día</h2><p>Adivínala en seis intentos</p></div>
+        <span class="icon" aria-hidden="true">🧺</span>
+        <div><h2>Artículo del súper <span class="tag">HOY</span></h2><p>Adivina el artículo de la compra</p></div>
+        <span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></span>
       </a>
     </li>
   </ul>
+  <p class="note">Los premios solo se dan jugando desde la app.</p>
 </main>
 <script src="shared/no-zoom.js"></script>
 <script>

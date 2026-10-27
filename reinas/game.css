@@ -1,21 +1,20 @@
 :root {
-  --line: rgba(26, 26, 46, 0.18);
-  --line-strong: #1a1a2e;
-  --queen: #1a1a2e;
-  --mark: rgba(26, 26, 46, 0.45);
-  --conflict: #d32f2f;
-  --gold: #f5c518;
+  --line: rgba(42, 81, 53, 0.18);
+  --line-strong: #8b5a2b;               /* brown, like farm wood */
+  --mark: rgba(42, 81, 53, 0.45);
+  --conflict: var(--brand-red);
+  --gold: var(--brand-yellow);
   --silver: #c9ced6;
   --bronze: #d58a4a;
-  /* region colours, light enough for a dark crown on top */
-  --rg0: #f7b2a8;
-  --rg1: #a8d8f7;
-  --rg2: #c5e6a6;
-  --rg3: #f9df8b;
-  --rg4: #d5bdf2;
-  --rg5: #f7c59f;
-  --rg6: #a6e3d7;
-  --rg7: #e6e2da;
+  /* farm pens, light enough for a pink piglet on top */
+  --rg0: #fce3a6;
+  --rg1: #cfe5c4;
+  --rg2: #f6d0c4;
+  --rg3: #bfd8ea;
+  --rg4: #e3d3f0;
+  --rg5: #ffd9b0;
+  --rg6: #b9dfd3;
+  --rg7: #e7e1d3;
 }
 html, body {
   touch-action: manipulation;
@@ -68,7 +67,7 @@ button {
   color: var(--brand-muted);
   font-weight: 600;
 }
-.levels button.active { background: var(--brand-accent); color: var(--brand-bg); }
+.levels button.active { background: var(--brand-primary); color: var(--brand-white); }
 
 /* ---------- Board ---------- */
 .board-wrap { position: relative; }
@@ -106,12 +105,17 @@ button {
 .cell.rg5 { background: var(--rg5); }
 .cell.rg6 { background: var(--rg6); }
 .cell.rg7 { background: var(--rg7); }
-.cell svg { width: 62%; height: 62%; fill: var(--queen); }
-.cell.conflict svg { fill: var(--conflict); }
-.cell.conflict {
-  background-image: repeating-linear-gradient(45deg, rgba(211, 47, 47, 0.28) 0 4px, transparent 4px 9px);
+.cell .pig {
+  display: block;
+  color: #000;                     /* opaque: the cell's translucent text colour fades emoji */
+  font-size: calc(min(100vw - 32px, 420px) / var(--n, 6) * 0.6);   /* scales with the cell */
 }
-.cell.pop svg { animation: pop 0.18s ease-out; }   /* the crown pops, not the cell */
+/* piglets in conflict get covered in mud and wobble */
+.cell.conflict .pig { filter: sepia(1) saturate(2.5) brightness(0.6); animation: wobble 0.4s ease-in-out; }
+.cell.conflict {
+  background-image: repeating-linear-gradient(45deg, rgba(203, 45, 60, 0.3) 0 4px, transparent 4px 9px);
+}
+.cell.pop .pig { animation: pop 0.18s ease-out; }   /* the piglet pops, not the cell */
 .board.solved .cell { animation: wave 0.5s ease-out var(--wave-delay, 0s) both; }
 
 .pause {
@@ -153,7 +157,7 @@ button {
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgba(10, 10, 25, 0.6);
+  background: var(--overlay);
   animation: fade 0.2s ease-out;
 }
 .win[hidden] { display: none; }
@@ -163,7 +167,9 @@ button {
   padding: 28px 24px 24px;
   border-radius: 20px;
   text-align: center;
-  background: var(--brand-surface);
+  background: var(--brand-bg);
+  box-shadow: 0 12px 40px rgba(42, 81, 53, 0.35);
+  border-top: 6px solid var(--brand-accent);
   animation: pop-in 0.35s cubic-bezier(.2, 1.6, .4, 1);
 }
 .medal { font-size: 64px; line-height: 1; }
@@ -175,12 +181,12 @@ button {
   padding: 6px 14px;
   border-radius: 999px;
   font-weight: 700;
-  color: var(--brand-bg);
-  background: var(--brand-muted);
+  color: var(--brand-muted);
+  background: var(--brand-surface);
 }
-.card .prize.gold { background: var(--gold); }
-.card .prize.silver { background: var(--silver); }
-.card .prize.bronze { background: var(--bronze); }
+.card .prize.gold { background: var(--gold); color: var(--brand-on-accent); }
+.card .prize.silver { background: var(--silver); color: var(--brand-on-accent); }
+.card .prize.bronze { background: var(--bronze); color: var(--brand-white); }
 .card .best { margin-top: 10px; font-size: 14px; color: var(--brand-muted); }
 .card button {
   width: 100%;
@@ -188,11 +194,12 @@ button {
   padding: 14px;
   border-radius: 12px;
   font-weight: 700;
-  color: var(--brand-bg);
+  color: var(--brand-on-accent);
   background: var(--brand-accent);
 }
 
 @keyframes pop { 50% { transform: scale(1.25); } }
+@keyframes wobble { 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
 @keyframes wave { 50% { filter: brightness(1.25); transform: scale(0.92); } }
 @keyframes fade { from { opacity: 0; } }
 @keyframes pop-in { from { opacity: 0; transform: scale(0.7); } }

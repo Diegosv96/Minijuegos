@@ -1,10 +1,21 @@
 /* Common brand styles shared by the menu and every game. */
 :root {
-  --brand-bg: #1a1a2e;
-  --brand-surface: #25254a;
-  --brand-accent: #ffcc33;
-  --brand-text: #ffffff;
-  --brand-muted: #b9b9d6;
+  /* Brand palette */
+  --brand-green: #2A5135;
+  --brand-yellow: #FAB52A;
+  --brand-yellow-2: #FAB522;
+  --brand-red: #CB2D3C;
+  --brand-white: #FFFFFF;
+
+  --brand-bg: var(--brand-white);
+  --brand-surface: #EEF3EF;        /* light tint of the green for panels and buttons */
+  --brand-border: #D5E0D8;
+  --brand-primary: var(--brand-green);
+  --brand-accent: var(--brand-yellow);
+  --brand-on-accent: var(--brand-green);   /* text on yellow */
+  --brand-text: var(--brand-green);
+  --brand-muted: #5E7766;
+  --overlay: rgba(42, 81, 53, 0.55);
   --brand-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --text: var(--brand-text);
 }
@@ -48,5 +59,7 @@ html, body {
   z-index: 10;
   top: calc(10px + env(safe-area-inset-top, 0px));
   left: calc(10px + env(safe-area-inset-left, 0px));
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--brand-primary);
+  color: var(--brand-white);
+  box-shadow: 0 2px 8px rgba(42, 81, 53, 0.3);
 }

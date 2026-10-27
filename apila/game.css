@@ -1,11 +1,28 @@
 :root {
-  --sky-top: #2b2b5c;
-  --sky-bottom: #8a6fd1;
-  --ground: #1a1a2e;
-  --prize-gold: #f5c518;
-  --prize-gold-dark: #c99700;
-  --prize-blue: #3d8bfd;
-  --prize-blue-dark: #1f5fc4;
+  --sky-top: #ffffff;
+  --sky-bottom: #eef3ef;
+  --ground: var(--brand-green);
+  --ground-stripe: var(--brand-yellow);
+  --prize-gold: var(--brand-yellow);
+  --prize-gold-dark: #d9940f;
+  --prize-super: var(--brand-red);
+  --prize-super-dark: #9c1f2b;
+  --flash: var(--brand-yellow);
+  --text: var(--brand-green);
+  --text-outline: #ffffff;
+  /* sandwich layers */
+  --bread: #d9963f;
+  --bread-top: #e9b468;
+  --bread-score: #f6d9a6;
+  --cheese: var(--brand-yellow);
+  --cheese-hole: #e2971b;
+  --tomato: var(--brand-red);
+  --tomato-in: #e4606c;
+  --tomato-seed: #f6d27a;
+  --lettuce: #5f9e4a;
+  --lettuce-light: #8cc46f;
+  --ham: #e9969f;
+  --ham-fat: #f8d9dc;
 }
 html, body {
   overflow: hidden;
