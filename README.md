@@ -48,3 +48,12 @@ La web queda en `https://diegosv96.github.io/Minijuegos/`.
 - Al terminar, el juego llama a `notify({type:'game_over', ...})`.
   Por ahora el envío está desactivado (`BRIDGE_ENABLED = false` en
   `shared/bridge.js`) y solo se muestra en la consola.
+
+## Añadir a la pantalla de inicio
+
+- El menú muestra un aviso para añadir la web a la pantalla de inicio
+  (`shared/install.js`): botón en Chrome/Edge/Samsung de Android e
+  instrucciones en iPhone, Firefox y navegadores internos de otras apps.
+  No sale dentro de la app, ni si ya está instalada, ni en el ordenador.
+- Enlace para compartir con el aviso destacado:
+  `https://diegosv96.github.io/Minijuegos/?instalar=1`

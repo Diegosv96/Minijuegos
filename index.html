@@ -62,6 +62,47 @@
     background: var(--brand-red); color: var(--brand-white);
   }
   .note { margin-top: 20px; font-size: 13px; text-align: center; color: var(--brand-muted); }
+  /* "Add to home screen" banner (shared/install.js) */
+  #install { margin-bottom: 16px; }
+  #install[hidden] { display: none; }
+  .install-card {
+    position: relative; padding: 14px; border-radius: 16px;
+    background: var(--brand-surface); border: 1px solid var(--brand-border);
+  }
+  .install-head { display: flex; align-items: center; gap: 12px; padding-right: 28px; }
+  .install-head img { flex: none; border-radius: 12px; }
+  .install-head h2 { font-size: 16px; }
+  .install-head p, .install-text { font-size: 14px; color: var(--brand-muted); }
+  .install-text { margin-top: 10px; }
+  .install-card ol { margin: 12px 0 0 20px; font-size: 14px; display: grid; gap: 6px; }
+  .install-card .glyph {
+    width: 18px; height: 18px; vertical-align: -3px;
+    fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .install-close {
+    position: absolute; top: 8px; right: 8px; width: 32px; height: 32px;
+    border: 0; border-radius: 50%; background: transparent;
+    color: var(--brand-muted); font-size: 24px; line-height: 1; cursor: pointer;
+  }
+  .install-btn {
+    display: block; width: 100%; margin-top: 12px; padding: 12px;
+    border: 0; border-radius: 12px; cursor: pointer;
+    background: var(--brand-accent); color: var(--brand-on-accent);
+    font: inherit; font-size: 16px; font-weight: 700;
+  }
+  .install-btn:active { transform: scale(0.98); }
+  /* Opened with ?instalar=1: bottom sheet over the menu */
+  #install.featured {
+    position: fixed; inset: 0; z-index: 20; margin: 0;
+    display: flex; align-items: flex-end; justify-content: center;
+    background: var(--overlay);
+  }
+  #install.featured[hidden] { display: none; }
+  #install.featured .install-card {
+    width: 100%; max-width: 480px; border: 0; border-radius: 20px 20px 0 0;
+    padding: 20px 16px calc(20px + env(safe-area-inset-bottom, 0px));
+    background: var(--brand-bg);
+  }
 </style>
 </head>
 <body>
@@ -72,6 +113,7 @@
   </div>
 </header>
 <main>
+  <div id="install" hidden></div>
   <ul class="games">
     <li>
       <a class="game" href="vuela/index.html">
@@ -119,6 +161,7 @@
   <p class="note">Los premios solo se dan jugando desde la app.</p>
 </main>
 <script src="shared/no-zoom.js"></script>
+<script src="shared/install.js"></script>
 <script>
   // Keep ?token=... when opening a game from the menu
   if (location.search) {

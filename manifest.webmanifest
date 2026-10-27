@@ -2,6 +2,7 @@
   "name": "Juega y gana",
   "short_name": "Juega y gana",
   "lang": "es",
+  "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
