@@ -31,11 +31,21 @@ html, body {
   font-family: var(--brand-font);
   -webkit-tap-highlight-color: transparent;
 }
-/* Opened from the home screen, iOS paints the status bar with the page
-   background: html carries the colour at the top of the current screen
-   (each page sets --topbar, also in its theme-color) and body covers the
-   rest with the page colour. */
+/* Opened from the home screen, iOS paints the status bar with the document
+   background: html blended with body. So html carries the colour at the top
+   of the current screen (each page sets --topbar, also in its theme-color),
+   body stays transparent, and a fixed layer behind the content paints the
+   page colour. */
 html { background: var(--topbar, var(--brand-bg)); }
+body { background: transparent; }
+body::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  background: var(--brand-bg);
+  pointer-events: none;
+}
 
 /* Solid strip at the top edge in the same colour: Safari tints its top bar
    with a fixed element touching that edge. Opened from the home screen the
