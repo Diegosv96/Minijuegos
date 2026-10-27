@@ -79,7 +79,15 @@
     // DPR capped at 2: at 3x the canvas has twice the pixels for no visible gain
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const cw = stage.clientWidth, ch = stage.clientHeight;
+    const oldW = W;
     W = Math.max(MIN_W, Math.min(MAX_W, H * cw / ch));   // not rounded: avoids 1px bars
+    // webviews often resize right after loading: keep the sandwich centered
+    if (tower) {
+      const dx = (W - oldW) / 2;
+      for (const b of tower) b.x += dx;
+      for (const p of pieces) p.x += dx;
+      if (moving) { moving.x += dx; moving.prevX += dx; }
+    }
     scale = Math.min(cw / W, ch / H);
     safeTop = (parseFloat(getComputedStyle(safeProbe).paddingTop) || 0) / scale;
     canvas.style.width = (W * scale) + 'px';
