@@ -430,7 +430,7 @@
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.fillRect(0, 0, W, H);
       text('¡Fin!', W / 2, top + 150, 50);
-      text(`Capas: ${score}`, W / 2, top + 225, 28);
+      text(`Ingredientes: ${score}`, W / 2, top + 225, 28);
       text(`Récord: ${best}`, W / 2, top + 265, 22);
       if (overTimer > 0.6) text('Toca para reintentar', W / 2, top + 330, 20);
     }
