@@ -1,6 +1,7 @@
 :root {
   --sky-top: #5fb8ec;
   --sky-bottom: #cdeeff;
+  --topbar: var(--sky-top);        /* status bar matches the sky */
   --cloud: #ffffff;
   --ground: #e4ebe5;
   --ground-dark: var(--brand-green);

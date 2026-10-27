@@ -32,6 +32,22 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Solid strip under the status bar. Safari on iPhone tints its top bar with
+   the colour of a fixed element touching the top edge; without one it leaves
+   the bar white and blurs the content scrolling under it. Each page sets
+   --topbar to the colour at the top of its screen. */
+body::before {
+  content: "";
+  position: fixed;
+  z-index: 9;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: max(env(safe-area-inset-top, 0px), 4px);
+  background: var(--topbar, var(--brand-bg));
+  pointer-events: none;
+}
+
 /* Back-to-menu button in every game (bridge.js keeps ?token=... on it) */
 .back {
   flex: none;
