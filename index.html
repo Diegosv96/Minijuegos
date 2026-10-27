@@ -162,6 +162,27 @@
   </ul>
   <p class="note">Los premios solo se dan jugando desde la app.</p>
 </main>
+<!-- TEMPORAL: diagnóstico de la barra de estado en iPhone. Quitar al acabar. -->
+<pre id="diag" style="position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:30;margin:0;padding:8px;font:12px/1.4 ui-monospace,monospace;white-space:pre-wrap;background:#000c;color:#fff;border-radius:8px;pointer-events:none"></pre>
+<script>
+  (function () {
+    var probe = document.createElement('div');
+    probe.style.cssText = 'position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top,0px)';
+    document.body.appendChild(probe);
+    var meta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+    function show() {
+      document.getElementById('diag').textContent =
+        'standalone(css): ' + matchMedia('(display-mode: standalone)').matches +
+        '\nnavigator.standalone: ' + navigator.standalone +
+        '\nsafe-top: ' + getComputedStyle(probe).paddingTop +
+        '\ninner: ' + innerWidth + 'x' + innerHeight + '  screen: ' + screen.width + 'x' + screen.height +
+        '\nstatus-bar meta: ' + (meta ? meta.content : 'none') +
+        '\n' + navigator.userAgent.replace(/^.*?\(([^)]*)\).*$/, '$1');
+    }
+    show();
+    addEventListener('resize', show);
+  })();
+</script>
 <script src="shared/no-zoom.js"></script>
 <script src="shared/install.js"></script>
 <script>
