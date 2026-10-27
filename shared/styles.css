@@ -31,11 +31,15 @@ html, body {
   font-family: var(--brand-font);
   -webkit-tap-highlight-color: transparent;
 }
+/* Opened from the home screen, iOS paints the status bar with the page
+   background: html carries the colour at the top of the current screen
+   (each page sets --topbar, also in its theme-color) and body covers the
+   rest with the page colour. */
+html { background: var(--topbar, var(--brand-bg)); }
 
-/* Solid strip under the status bar, in the colour at the top of the current
-   screen (each page sets --topbar). In Safari it tints the browser's top bar;
-   opened from the home screen it fills the status bar zone, which pages and
-   full-screen games keep clear of (see #stage in the games). */
+/* Solid strip at the top edge in the same colour: Safari tints its top bar
+   with a fixed element touching that edge. Opened from the home screen the
+   page starts below the status bar, the inset is 0 and the strip disappears. */
 body::before {
   content: "";
   position: fixed;

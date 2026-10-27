@@ -89,9 +89,7 @@
       if (moving) { moving.x += dx; moving.prevX += dx; }
     }
     scale = Math.min(cw / W, ch / H);
-    // only the part of the notch the stage actually reaches (none from the home screen)
-    const notch = parseFloat(getComputedStyle(safeProbe).paddingTop) || 0;
-    safeTop = Math.max(0, notch - stage.getBoundingClientRect().top) / scale;
+    safeTop = (parseFloat(getComputedStyle(safeProbe).paddingTop) || 0) / scale;
     canvas.style.width = (W * scale) + 'px';
     canvas.style.height = (H * scale) + 'px';
     canvas.width = Math.round(W * scale * dpr);

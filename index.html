@@ -10,11 +10,11 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#2A5135">
 <meta name="apple-mobile-web-app-title" content="Juega y gana">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="stylesheet" href="shared/styles.css?v=7">
+<link rel="stylesheet" href="shared/styles.css?v=8">
 <style>
   :root { --topbar: var(--brand-primary); }   /* same green as the hero */
-  body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
+  /* grows with the list, so the green of html only shows behind the status bar */
+  body { height: auto; min-height: 100%; padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
   /* Green band at the top with the title, like a shop awning */
   .hero {
     position: relative;
@@ -162,8 +162,8 @@
   </ul>
   <p class="note">Los premios solo se dan jugando desde la app.</p>
 </main>
-<script src="shared/no-zoom.js?v=7"></script>
-<script src="shared/install.js?v=7"></script>
+<script src="shared/no-zoom.js?v=8"></script>
+<script src="shared/install.js?v=8"></script>
 <script>
   // Keep ?token=... when opening a game from the menu
   if (location.search) {
