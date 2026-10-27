@@ -29,6 +29,8 @@
       '  fixed: ' + fixed.getBoundingClientRect().height +
       (stage ? '\nstage: ' + stage.clientWidth + 'x' + stage.clientHeight : '') +
       (canvas ? '\ncanvas: ' + canvas.style.width + ' x ' + canvas.style.height : '') +
+      '\napp-h: ' + (getComputedStyle(document.documentElement).getPropertyValue('--app-h') || 'unset') +
+      '\nversion: 5' +
       '\nstatus-bar meta: ' + (meta ? meta.content : 'none');
   }
   show();
