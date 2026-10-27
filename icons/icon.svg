@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Full-bleed background: iOS and Android round the corners themselves -->
+  <rect width="512" height="512" fill="#2A5135"/>
+  <!-- Gamepad, kept inside the central safe zone of maskable icons -->
+  <g transform="translate(256 262) scale(0.82) translate(-256 -270)">
+    <path fill="#FAB52A" d="M176 176H336C392 176 420 200 432 250L452 336C462 380 428 404 396 380L352 344H160L116 380C84 404 50 380 60 336L80 250C92 200 120 176 176 176Z"/>
+    <rect x="152" y="220" width="40" height="84" rx="8" fill="#2A5135"/>
+    <rect x="130" y="242" width="84" height="40" rx="8" fill="#2A5135"/>
+    <circle cx="336" cy="236" r="22" fill="#CB2D3C"/>
+    <circle cx="380" cy="282" r="22" fill="#2A5135"/>
+  </g>
+</svg>
