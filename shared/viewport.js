@@ -8,7 +8,8 @@
   function update() {
     const full = standalone.matches && innerWidth === screen.width && innerHeight < screen.height;
     document.documentElement.style.setProperty('--app-h', full ? screen.height + 'px' : '100%');
+    window.__vp = 'ran full=' + full;   // TEMPORAL: read by shared/diag.js
   }
-  update();
+  try { update(); } catch (e) { window.__vp = 'error: ' + e.message; }
   addEventListener('resize', update);
 })();
