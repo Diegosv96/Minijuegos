@@ -47,22 +47,6 @@ body::after {
   pointer-events: none;
 }
 
-/* Solid strip at the top edge in the same colour. Safari, and the iPhone
-   opened from the home screen, show a solid bar when a fixed element touches
-   that edge; without one they blur the content under it (titles near the
-   top). Same colour as the bar, so it reads as part of it. */
-body::before {
-  content: "";
-  position: fixed;
-  z-index: 9;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: max(env(safe-area-inset-top, 0px), 4px);
-  background: var(--topbar, var(--brand-bg));
-  pointer-events: none;
-}
-
 /* Back-to-menu button in every game (bridge.js keeps ?token=... on it) */
 .back {
   flex: none;

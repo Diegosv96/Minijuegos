@@ -15,7 +15,7 @@ html, body {
   user-select: none;
 }
 body {
-  padding: calc(12px + env(safe-area-inset-top, 0px)) 8px calc(10px + env(safe-area-inset-bottom, 0px));
+  padding: calc(24px + env(safe-area-inset-top, 0px)) 8px calc(10px + env(safe-area-inset-bottom, 0px));
 }
 main {
   max-width: 480px;
@@ -41,6 +41,7 @@ button {
 .mode::first-letter { text-transform: uppercase; }
 .switch {
   flex: none;
+  white-space: nowrap;
   padding: 8px 14px;
   border-radius: 999px;
   background: var(--brand-surface);

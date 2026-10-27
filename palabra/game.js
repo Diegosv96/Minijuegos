@@ -115,7 +115,7 @@
     busy = false;
     winEl.hidden = true;
     modeEl.textContent = practice ? 'Práctica · sin premio' : formatDay();
-    switchEl.textContent = practice ? 'Artículo del día' : 'Practicar';
+    switchEl.textContent = practice ? 'Del día' : 'Practicar';
     tiles.flat().forEach(t => { t.textContent = ''; t.className = 'tile'; t.style.animationDelay = ''; });
     Object.values(keyEls).forEach(k => k.removeAttribute('data-state'));
 

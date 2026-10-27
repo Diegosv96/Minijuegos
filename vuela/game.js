@@ -505,8 +505,18 @@
     ctx.restore();
   }
 
+  // The status bar takes the page background (--topbar): lighten it like the
+  // white layer over the canvas while paused or after a crash.
+  let barVeil = 0;
+  function veilBar(a) {
+    if (a === barVeil) return;
+    barVeil = a;
+    document.documentElement.style.setProperty('--topbar', a ? `color-mix(in srgb, var(--sky-top), #fff ${a * 100}%)` : '');
+  }
+
   function drawUI() {
     const top = safeTop;           // keep the HUD below the notch
+    veilBar(paused ? 0.7 : state === 'over' ? 0.6 : 0);
     if (paused) {
       ctx.fillStyle = 'rgba(255,255,255,0.7)';
       ctx.fillRect(0, 0, W, H);
