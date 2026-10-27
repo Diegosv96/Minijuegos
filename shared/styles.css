@@ -47,6 +47,12 @@ body::before {
   background: var(--topbar, var(--brand-bg));
   pointer-events: none;
 }
+/* Opened from the home screen the page runs under the status bar
+   (black-translucent in every page), whose icons are always white,
+   so the strip behind them is always the brand green. */
+@media (display-mode: standalone) {
+  body::before { background: var(--brand-primary); }
+}
 
 /* Back-to-menu button in every game (bridge.js keeps ?token=... on it) */
 .back {
