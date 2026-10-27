@@ -47,9 +47,10 @@ body::after {
   pointer-events: none;
 }
 
-/* Solid strip at the top edge in the same colour: Safari tints its top bar
-   with a fixed element touching that edge. Opened from the home screen the
-   page starts below the status bar, the inset is 0 and the strip disappears. */
+/* Solid strip at the top edge in the same colour. Safari, and the iPhone
+   opened from the home screen, show a solid bar when a fixed element touches
+   that edge; without one they blur the content under it (titles near the
+   top). Same colour as the bar, so it reads as part of it. */
 body::before {
   content: "";
   position: fixed;
@@ -60,9 +61,6 @@ body::before {
   height: max(env(safe-area-inset-top, 0px), 4px);
   background: var(--topbar, var(--brand-bg));
   pointer-events: none;
-}
-@media (display-mode: standalone) {
-  body::before { height: env(safe-area-inset-top, 0px); }
 }
 
 /* Back-to-menu button in every game (bridge.js keeps ?token=... on it) */
