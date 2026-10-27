@@ -63,7 +63,10 @@ html, body {
    widens its world to the screen shape and keeps the HUD clear of the notch. */
 #stage {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--app-h, 100%);     /* shared/viewport.js fixes iOS home-screen apps */
   display: flex;
   align-items: center;
   justify-content: center;
